@@ -53,6 +53,10 @@ class Gamemat:
         hab, idx = self.findcard(card)
 
         # Add a tucked card to the bird
+        """
+        THINK: Should we add the tucked cards to the discarded cards
+        To keep track of them and so that they're no longer in play
+        """
         self.__dict__[hab][idx].tuckedcards += 1
     
     #===========================================================================
@@ -63,7 +67,7 @@ class Gamemat:
         # Find the card
         hab, idx = self.findcard(card)
 
-        # Add a tucked card to the bird
+        # Add a food token to the bird
         self.__dict__[hab][idx].cachedfood += 1
     
     #===========================================================================
@@ -76,5 +80,5 @@ class Gamemat:
         # Find the card
         hab, idx = self.findcard(card)
 
-        # Add a tucked card to the bird
+        # Lay that egg on that bird
         self.__dict__[hab][idx].laideggs += 1
