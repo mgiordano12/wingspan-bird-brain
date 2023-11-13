@@ -6,11 +6,14 @@ State --> BonusCardDeck[Bonus Card Deck, all cards minus cards in play]
 State --> BirdCardDeck[Bird Card Deck]
 State --> Birdfeeder[Birdfeeder, dice in and out of feeder]
 State --> TurnState[Turn state, see separate diagram]
+State --> EndOfRoundGoals[End of round goals]
+State --> Round
 
 Player --> BirdCards1[Bird cards in hand]
 Player --> BonusCards1[Bonus cards in hand]
 Player --> Board1[Board]
 Player --> Food1[Food in hand]
+Player --> TurnsRemaining1[Turns Remaining]
 Board1 --> ForestBirds1[Birds in forest]
 Board1 --> GrasslandBirds1[Birds in grassland]
 Board1 --> WetlandBirds1[Birds in wetland]
@@ -22,7 +25,8 @@ Opponent --> BirdsCards2[Bird cards in hand, only #]
 Opponent --> BonusCards2[Bonus cards, only #]
 Opponent --> Food2[Food in hand]
 Opponent --> Board2[Board w. same attrs as Player Board]
+Opponent --> TurnsRemaining2[Turns Remaining]
 
-BirdCardDeck --> FaceupCards
-BirdCardDeck --> FacedownCards
+BirdCardDeck --> FaceupCards[Faceup cards]
+BirdCardDeck --> FacedownCards[Facedown cards]
 ```
