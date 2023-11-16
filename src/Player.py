@@ -30,7 +30,8 @@ class Player:
         self.action_cubes = 8  # Assuming a 2-3 player game for this example
 
     def start_game_setup(self, initial_bird_card : list):
-        
+        #TODO
+        return
 
     def __repr__(self):
         return (f"Player(Name: {self.name}, Hand: {self.hand}, GameMat: {self.game_mat}, "
