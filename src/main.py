@@ -1,7 +1,6 @@
 from BirdCardDeck import BirdCardDeck
 from Birdfeeder import Birdfeeder
 from BonusCardDeck import BonusCardDeck
-from EndOfRoundGoal import EndOfRoundGoal
 from Player import Player
 
 #### TODO: Initializing one player now, but will need to extend to multiple players in the future
