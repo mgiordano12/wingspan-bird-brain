@@ -13,12 +13,6 @@ VOLUME ["/tmp/.X11-unix"]
 
 # Install Python 3, PyQt6
 RUN apt-get update && apt-get install -y python3-pyqt6
-RUN apt-get update && apt-get install -y adduser libxcb1 libxcb-render0 libxcb-shm0 libxcb-xinerama0 qtcreator x11-apps
-RUN ldd /usr/lib/x86_64-linux-gnu/qt6/plugins/platforms/libqxcb.so
-RUN dpkg -S /usr/lib/x86_64-linux-gnu/libxcb-xinerama.so.0 
-
-# Add user
-RUN adduser --quiet --disabled-password qtuser && usermod -a -G audio qtuser
 
 # Create a working directory
 WORKDIR /app
