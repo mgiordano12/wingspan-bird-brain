@@ -1,0 +1,5 @@
+names==0.3.0
+numpy==1.22.3
+PyQt6==6.6.0
+PyQt6_sip==13.6.0
+Requests==2.31.0

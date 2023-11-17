@@ -15,7 +15,7 @@ sudo docker build -t wingspan-birdbrain-pyqt .
 ```
 
 ```
-sudo docker run --rm -it   -v /tmp/.X11-unix:/tmp/.X11-unix   -e DISPLAY=$DISPLAY   wingspan-birdbrain-pyqt
+sudo docker run --rm -it   -v /run/user/1000/gdm/Xauthority:/root/.Xauthority -v /tmp/.X11-unix:/tmp/.X11-unix   -e DISPLAY=$DISPLAY   wingspan-birdbrain-pyqt
 ```
 
 
