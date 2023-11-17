@@ -14,6 +14,8 @@ birdfeeder = Birdfeeder()
 
 players = []
 for i in range(NUM_PLAYERS):
-    players.append(Player(PLAYER_NAMES[i]))
+    initial_cards = deck.draw_facedown_cards(n=5)
+    initial_bonus_cards = bonus_card_deck.draw_cards(n=2)
+    players.append(Player(initial_cards, initial_bonus_cards, PLAYER_NAMES[i]))
 
 print(players[0])

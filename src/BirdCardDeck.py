@@ -27,10 +27,16 @@ class BirdCardDeck:
         return card
 
     #===================================================================================================================
-    def draw_facedown_card(self):
-        card = random.sample(self.facedown_cards, 1)[0]
-        self.facedown_cards.remove(card) # remove the card
-        return card
+    def draw_facedown_cards(self, n = 1):
+        cards = []
+        for i in range(n):
+            card = random.sample(self.facedown_cards, 1)[0]
+            cards.append(card)
+            self.facedown_cards.remove(card) # remove the card
+        if n == 1:
+            return cards[0]
+        else:
+            return cards
     
     #===================================================================================================================
     def discard(self, card):

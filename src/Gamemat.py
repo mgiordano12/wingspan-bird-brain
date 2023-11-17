@@ -1,15 +1,15 @@
 from BirdCard import BirdCard
+from Habitat import Habitat
 
 class Gamemat:
     #===========================================================================
     def __init__(self):
-        self.forest = list()
-        self.grassland = list()
-        self.wetland = list()
+        self.habitats = {'forest' : list(), 'grassland' : list(), 'wetland' : list()}
+        self.eggs = 0
 
     #===========================================================================
     def playcard(self, card, habitat):
-        if type(habitat) is not str or habitat not in ['forest', 'grassland', 'wetland']:
+        if type(habitat) is not str or habitat not in self.habitats.keys():
             raise Exception('Habitat must be a string in ["forest", "grassland", "wetland"].')
         elif type(card) is not BirdCard:
             raise TypeError('Card must of type BirdCard.')
@@ -18,12 +18,15 @@ class Gamemat:
         elif card.__dict__[habitat] is not True:
             raise Exception(f'{card} can not be played in {habitat}. It is not a valid habitat for this bird.')
 
-        if habitat == 'forest':
-            self.forest.append(card)
-        elif habitat == 'grassland':
-            self.grassland.append(card)
-        elif habitat == 'wetland':
-            self.wetland.append(card)
+        egg_cost = 0
+        if len(self.habitats[habitat] > 0) and len(self.habitats[habitat] < 3):
+            # .... The cards which take up multiple spaces are gonna break this.  Might consider using
+            # a habitat class.  I started building one.  Not sure if it's worth it
+            egg_cost = 1
+        elif len(self.habitats[habitat]) < 5:
+            egg_cost = 2
+        #### TODO: @owen Go to GUI and choose eggs to remove
+        #self.editeggs(returnedCard, n)
 
     #===========================================================================
     def findcard(self, card):
@@ -71,14 +74,17 @@ class Gamemat:
         self.__dict__[hab][idx].cachedfood += 1
     
     #===========================================================================
-    def layegg(self, card):
+    def editeggs(self, card, n):
         if type(card) is not BirdCard:
             raise TypeError('Card must be of type BirdCard.')
-        elif card.laideggs == card.egg_capacity:
+        elif n > 0 and card.laideggs == card.egg_capacity:
             raise Exception(f'{card} cannot hold any more eggs.')
+        elif n < 0 and card.laideggs < n:
+            raise Exception(f'{card} does not have enough eggs.')
         
         # Find the card
         hab, idx = self.findcard(card)
 
         # Lay that egg on that bird
-        self.__dict__[hab][idx].laideggs += 1
+        self.__dict__[hab][idx].laideggs += n
+        self.eggs += n
