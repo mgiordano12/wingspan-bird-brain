@@ -11,7 +11,7 @@
 		- Round
 		- End of round goals
 		- Opponent: played cards, eggs, cached food, tucked cards, number of bird cards in hand, number of bonus cards in hand, food in hand
-			- ??? Do we allow the agent to observe the cards that the opponent has picked up? In theory a human could keep track of this
+			- ??? Do we allow the agent to observe the cards that the opponent has picked up? In theory a human could keep track of this. Although you don't know if they've been discarded 
 	- Turn state - current state of turn, determines possible actions
 	- Round
 	- Birdfeeder
