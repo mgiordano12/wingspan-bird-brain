@@ -87,4 +87,5 @@ class BirdCard:
 
     #===================================================================================================================
     def __repr__(self):
-        return f"BirdCard: {self.common_name}"
+        return f"{self.common_name}"
+    # include , Eggs: {self.laideggs}/{self.egg_capacity}, Nest: {self.nest_type}, Power: {self.victory_points}?

@@ -11,4 +11,4 @@ class EndOfRoundGoal:
     
     #===================================================================================================================
     def __repr__(self):
-        return f"EndOfRoundGoal: {self.name}"
+        return f"{self.name}"

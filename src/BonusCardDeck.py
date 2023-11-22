@@ -4,7 +4,9 @@ import random
 
 class BonusCardDeck:
     #===================================================================================================================
-    def __init__(self):
+    def __init__(self,seed=0):
+        if seed != 0:
+            random.seed(seed)
         self.deck = load_bonuses()
         self.discarded = set()
 

@@ -3,6 +3,7 @@ from BirdfeederDie import BirdfeederDie
 class Birdfeeder:
 
     def __init__(self):
+        # TODO: We need to randomly seed the birdfeeder, which isn't trivial
         self.food = list() # initialize
         self.reroll() # roll for 1st time
 
@@ -20,5 +21,7 @@ class Birdfeeder:
     def take(self, food):
         if food not in self.food:
             raise ValueError(f'{food} is not in the birdfeeder.')
-        
         self.food.remove(food)
+
+    def __repr__(self):
+        return f'BirdfeederDie: {self.food}'

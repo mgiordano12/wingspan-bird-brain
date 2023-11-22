@@ -32,11 +32,12 @@ class Player:
         if cards is not list:
             TypeError('If passing in cards to choose, must be a list')
         # @Owen: interact with user to decide the bird cards
-
+        # FIXME:
+        removedCards = cards[:2]
         # self.editBirdCards(removedCards, remove = True)
         return
     
-    def chooseBonusCards(self,cards : list):
+    def chooseBonusCards(self, cards : list):
         if cards is not list:
             TypeError('If passing in cards to choose, must be a list')
         # @Owen: interact with user to decide the bonus cards
@@ -100,6 +101,8 @@ class Player:
 
 
     def __repr__(self):
-        return (f"Player(Name: {self.name}, Bird Cards: {self.birdcards}, Bonus Cards: {self.bonuscards},"
-                f"GameMat: {self.gamemat}, "
+        return (f"Player Name: {self.name},\n"
+                f"Bird Cards: {self.birdcards},\n"
+                f"Bonus Cards: {self.bonuscards},\n\n"
+                f"GameMat: \n{self.gamemat}\n\n"
                 f"Food Tokens: {self.food}, Eggs: {self.gamemat.eggs}")

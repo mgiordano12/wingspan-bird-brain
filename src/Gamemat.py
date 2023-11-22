@@ -88,3 +88,9 @@ class Gamemat:
         # Lay that egg on that bird
         self.__dict__[hab][idx].laideggs += n
         self.eggs += n
+
+    def __repr__(self):
+        return (f"Forest     | {self.habitats['forest']}\n"
+                f"Grassland  | {self.habitats['grassland']}\n"
+                f"Wetland    | {self.habitats['wetland']}" 
+                )

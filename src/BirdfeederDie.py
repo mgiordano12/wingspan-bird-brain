@@ -1,7 +1,9 @@
 import random
 
 class BirdfeederDie:
-    def __init__(self):
+    def __init__(self, seed = 0):
+        if seed != 0:
+            random.seed(seed)
         self.faces = ['Fish', 'Rodent', 'Fruit', 'Invertebrate', 'Seed', 'Invertebrate+Seed',]
         self.roll()
     
