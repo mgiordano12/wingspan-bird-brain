@@ -1,0 +1,20 @@
+This is how someone implemented chess's action space and observation space: https://github.com/genyrosk/gym-chess/blob/master/gym_chess/envs/chess_v1.py
+It actually has a much smaller action space than wingspan...
+
+I'm also admittedly not sure how much of this is action space versus observation space?
+
+Action Space
+play_bird = 15 (places available) * white_power_space (this gets really large when you consider that one of the 
+			cards allows you to play another bird...)
+gain_food = 5 (number of unique foods)^4 (# of total possible foods, or should this be 4+3+2+1 since we don't know how many we are taking?) 
+	 * 2 (give up a bird card for another food?)
+	* number_of_bird_cards (which card?)
+	* brown_power_action_space^5 (I could have up to five cards, all with brown powers...)
+lay_eggs = ( 15 (number of places on the mat we could lay an egg) * number_of_bird_cards ) ^ (5) (number of possible eggs to lay) * 
+	brown_power_action_space^5 (I could have up to five cards, all with brown powers...) * 2 (give up a food for an egg?) * 5 (which food?)
+draw_cards = 
+
+
+Observation space
+
+number_of_bird_cards ^ (hand size limit) * number_bird_cards^(15 (spaces)
