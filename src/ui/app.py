@@ -1,9 +1,10 @@
 import sys
 sys.path.append('../')
+from BirdCardDeck import BirdCardDeck
+from BirdCardWidget import BirdCardWidget
 from Birdfeeder import Birdfeeder
 from EndOfRoundGoalMat import EndOfRoundGoalMat
 from Player import Player
-
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QGridLayout, QLabel, QWidget, QHBoxLayout, QPushButton,
@@ -57,6 +58,7 @@ class WingspanAppWindow(QMainWindow):
         self.birdfeeder = Birdfeeder()
         self.player = Player([], [])
         self.eorgMat = EndOfRoundGoalMat()
+        self.birdCardDeck = BirdCardDeck()
 
         # Initialize layouts
         self.centralLayout = QGridLayout()
@@ -64,7 +66,8 @@ class WingspanAppWindow(QMainWindow):
         self.forest = QWidget(styleSheet='background-color: green;')
         self.grassland = QWidget(styleSheet='background-color: yellow;')
         self.wetland = QWidget(styleSheet='background-color: blue;')
-        self.birdCardDeck = QWidget(styleSheet='background-color: gray;')
+        self.birdCardDeckWidget = QWidget(styleSheet='background-color: gray;')
+        self.birdCardDeckLayout = QGridLayout(self.birdCardDeckWidget)
         self.birdfeederLayout = QGridLayout()
         self.handFoodLayout = QGridLayout()
         self.handBirdCards = QWidget(styleSheet='background-color: gray;')
@@ -118,11 +121,7 @@ class WingspanAppWindow(QMainWindow):
         self.drawBirdfeeder()
 
         # Bird card deck layout
-        birdCardDeckLayout = QGridLayout(self.birdCardDeck)
-        birdCardDeckLayout.addWidget(QLabel('Bird cards', styleSheet='font-weight: bold;'), 0, 0)
-        birdCardDeckLayout.addWidget(QLabel(styleSheet='border: 1px solid black;'), 1, 0)
-        birdCardDeckLayout.addWidget(QLabel(styleSheet='border: 1px solid black;'), 1, 1)
-        birdCardDeckLayout.addWidget(QLabel(styleSheet='border: 1px solid black;'), 1, 2)
+        self.drawBirdCardDeck()
 
         # Food in hand layout
         self.drawFoodHand()
@@ -130,7 +129,8 @@ class WingspanAppWindow(QMainWindow):
         # Bird cards in hand layout
         handBirdCardsLayout = QHBoxLayout(self.handBirdCards)
         handBirdCardsLayout.addWidget(QPushButton(text='<', styleSheet='font-weight: bold;'))
-        handBirdCardsLayout.addWidget(QLabel('1', styleSheet='border: 1px solid black;'))
+        # handBirdCardsLayout.addWidget(QLabel('1', styleSheet='border: 1px solid black;'))
+        handBirdCardsLayout.addWidget(BirdCardWidget(self.birdCardDeck.faceup_cards[0]))
         handBirdCardsLayout.addWidget(QLabel('2', styleSheet='border: 1px solid black;'))
         handBirdCardsLayout.addWidget(QLabel('3', styleSheet='border: 1px solid black;'))
         handBirdCardsLayout.addWidget(QLabel('4', styleSheet='border: 1px solid black;'))
@@ -149,7 +149,7 @@ class WingspanAppWindow(QMainWindow):
         self.centralLayout.addWidget(self.grassland, 1, 0)
         self.centralLayout.addLayout(self.birdfeederLayout, 1, 1)
         self.centralLayout.addWidget(self.wetland, 2, 0)
-        self.centralLayout.addWidget(self.birdCardDeck, 2, 1)
+        self.centralLayout.addWidget(self.birdCardDeckWidget, 2, 1)
         self.centralLayout.addLayout(self.handBonusCardsLayout, 3, 0)
         self.centralLayout.addLayout(self.handFoodLayout, 3, 1)
         self.centralLayout.addWidget(self.handBirdCards, 4, 0, 1, 2)
@@ -200,7 +200,7 @@ class WingspanAppWindow(QMainWindow):
             self.drawBirdfeeder()
             self.drawFoodHand()
 
-    #==========================================================================
+    #===========================================================================
     def drawFoodHand(self):
         clearLayout(self.handFoodLayout)
         self.handFoodLayout.addWidget(QLabel('Food in hand', styleSheet='font-weight: bold;'), 0, 0)
@@ -214,6 +214,21 @@ class WingspanAppWindow(QMainWindow):
         self.handFoodLayout.addWidget(QLabel(f'x {self.player.food["Rodent"]}'), 1, 3)
         self.handFoodLayout.addWidget(QLabel(pixmap=QPixmap('./images/food_fruit.png')), 1, 4)
         self.handFoodLayout.addWidget(QLabel(f'x {self.player.food["Fruit"]}'), 1, 5)
+
+    #===========================================================================
+    def drawBirdCardDeck(self):
+        clearLayout(self.birdCardDeckLayout)
+        self.drawBirdCardButton = QPushButton('Draw facedown card')
+        self.drawBirdCardButton.clicked.connect(self.drawBirdCard)
+        self.birdCardDeckLayout.addWidget(QLabel('Bird cards', styleSheet='font-weight: bold;'), 0, 0)
+        self.birdCardDeckLayout.addWidget(self.drawBirdCardButton, 0, 1)
+        self.birdCardDeckLayout.addWidget(QLabel(self.birdCardDeck.faceup_cards[0].common_name, styleSheet='border: 1px solid black;'), 1, 0)
+        self.birdCardDeckLayout.addWidget(QLabel(self.birdCardDeck.faceup_cards[1].common_name, styleSheet='border: 1px solid black;'), 1, 1)
+        self.birdCardDeckLayout.addWidget(QLabel(self.birdCardDeck.faceup_cards[2].common_name, styleSheet='border: 1px solid black;'), 1, 2)
+
+    #===========================================================================
+    def drawBirdCard(self):
+        raise NotImplementedError
 
 # Main loop ====================================================================
 app = QApplication(sys.argv)
