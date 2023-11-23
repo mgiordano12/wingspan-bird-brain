@@ -3,17 +3,17 @@ from BirdfeederDie import BirdfeederDie
 class Birdfeeder:
 
     def __init__(self):
-        self.in_feeder = list()
-        self.out_of_feeder = list()
+        # TODO: We need to randomly seed the birdfeeder, which isn't trivial
+        self.food = list()
         self.can_be_rerolled = True
-        self.roll() # roll for 1st time
+        self.reroll() # roll for 1st time
 
-    def roll(self):
+    def reroll(self):
         if not self.can_be_rerolled:
-            raise Exception(f'Bird feeder cannot be re-rolled. Currently has {self.in_feeder}.')
+            raise Exception(f'Bird feeder cannot be re-rolled. Currently has {self.food}.')
         
-        self.in_feeder, self.out_of_feeder = list(), list()
-        self.in_feeder = [
+        del self.food # clear the birdfeeder
+        self.food = [
             BirdfeederDie().faceup_side, BirdfeederDie().faceup_side, 
             BirdfeederDie().faceup_side, BirdfeederDie().faceup_side, 
             BirdfeederDie().faceup_side
@@ -21,11 +21,13 @@ class Birdfeeder:
         self.can_be_rerolled = False
 
     def take(self, food):
-        if food not in self.in_feeder:
-            raise ValueError(f'{food} is not in the birdfeeder.')
-
-        if len(set(food)) <= 1:
-            self.can_be_rerolled = True
+        if food not in self.food:
+            raise ValueError(f'{food} is not in the birdfeeder. Birdfeeder has {self.food}')
         
-        self.in_feeder.remove(food)
-        self.out_of_feeder.append(food)
+        self.food.remove(food)
+
+        if len(set(self.food)) <= 1:
+            self.can_be_rerolled = True
+
+    def __repr__(self):
+        return f'Birdfeeder: {self.food}'

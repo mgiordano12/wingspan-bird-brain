@@ -1,28 +1,21 @@
 import sys
 sys.path.append('../')
 from Birdfeeder import Birdfeeder
+from EndOfRoundGoalMat import EndOfRoundGoalMat
 from Player import Player
 
+from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QGridLayout, QLabel, QWidget, QHBoxLayout, QPushButton,
-    QAbstractButton,
+    QMessageBox
 )
-from PyQt6.QtGui import QPixmap, QPainter
+from PyQt6.QtGui import QPixmap
 
-class PicButton(QAbstractButton):
-    def __init__(self, impath, parent=None):
-        super(PicButton, self).__init__(parent)
-        self.pixmap = QPixmap(impath)
-        self.impath = impath
-
-    def paintEvent(self, event):
-        painter = QPainter(self)
-        painter.drawPixmap(event.rect(), self.pixmap)
-
-    def sizeHint(self):
-        return self.pixmap.size()
     
+
 def clearLayout(layout):
+    """ Used to clear all children out of layouts before redrawing them
+    """
     while layout.count():
         child = layout.takeAt(0)
         if child.widget():
@@ -31,12 +24,27 @@ def clearLayout(layout):
             clearLayout(child)
 
 food = {
-    'Fish': './images/food_fish.png', 
-    'Rodent': './images/food_rodent.png', 
-    'Fruit': './images/food_fruit.png', 
-    'Invertebrate': './images/food_invertebrate.png', 
-    'Seed': './images/food_seed.png', 
-    'Invertebrate+Seed': './images/food_invertebrate+seed.png',
+    'Fish': './images/food_fish.png', 'Rodent': './images/food_rodent.png', 
+    'Fruit': './images/food_fruit.png', 'Invertebrate': './images/food_invertebrate.png', 
+    'Seed': './images/food_seed.png', 'Invertebrate+Seed': './images/food_invertebrate+seed.png',
+}
+eorgs = {
+    'Bird in Forest': './images/eorg_bird_in_forest.png', 
+    'Bird in Grassland': './images/eorg_bird_in_grassland.png', 
+    'Bird in Wetland': './images/eorg_bird_in_wetland.png',
+    'Bowl Nest Bird with Egg': './images/eorg_bowl_nest_bird_w_egg.png',
+    'Cavity Nest Bird with Egg': './images/eorg_cavity_nest_bird_w_egg.png',
+    'Egg in Bowl Nest': './images/eorg_egg_in_bowl_nest.png',
+    'Egg in Cavity Nest': './images/eorg_egg_in_cavity_nest.png',
+    'Egg in Forest': './images/eorg_egg_in_forest.png',
+    'Egg in Grassland': './images/eorg_egg_in_grassland.png',
+    'Egg in Ground Nest': './images/eorg_egg_in_ground_nest.png',
+    'Egg in Platform Nest': './images/eorg_egg_in_platform_nest.png',
+    'Egg in Wetland': './images/eorg_egg_in_wetland.png',
+    'Ground Nest Bird with Egg': './images/eorg_ground_nest_bird_w_egg.png',
+    'Platform Nest Bird with Egg': './images/eorg_platform_nest_bird_w_egg.png',
+    'Sets of Eggs in 3 Habitats': './images/eorg_sets_of_eggs_in_3_habitats.png',
+    'Total Bird': './images/eorg_total_bird.png',
 }
 
 # Main window class ============================================================
@@ -48,6 +56,7 @@ class WingspanAppWindow(QMainWindow):
         # Initialize all of the game element objects
         self.birdfeeder = Birdfeeder()
         self.player = Player([], [])
+        self.eorgMat = EndOfRoundGoalMat()
 
         # Initialize layouts
         self.centralLayout = QGridLayout()
@@ -89,13 +98,21 @@ class WingspanAppWindow(QMainWindow):
         wetlandLayout.addWidget(QLabel(styleSheet='border: 1px solid black;'))
 
         # EORG Layout
+        pixmap0 = QPixmap(eorgs[self.eorgMat.goals[0].name])
+        pixmap1 = QPixmap(eorgs[self.eorgMat.goals[1].name])
+        pixmap2 = QPixmap(eorgs[self.eorgMat.goals[2].name])
+        pixmap3 = QPixmap(eorgs[self.eorgMat.goals[3].name])
+        pixmap0 = pixmap0.scaled(60, 60, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+        pixmap1 = pixmap1.scaled(60, 60, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+        pixmap2 = pixmap2.scaled(60, 60, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+        pixmap3 = pixmap3.scaled(60, 60, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
         infoLayout = QGridLayout(self.info)
         infoLayout.addWidget(QLabel('Round: 1', styleSheet='font-weight: bold;'), 0, 0)
         infoLayout.addWidget(QLabel('Turns remaining: 8', styleSheet='font-weight: bold;'), 0, 2)
-        infoLayout.addWidget(QLabel('Rd. 1', styleSheet='border: 1px solid black;'), 2, 0)
-        infoLayout.addWidget(QLabel('Rd. 2', styleSheet='border: 1px solid black;'), 2, 1)
-        infoLayout.addWidget(QLabel('Rd. 3', styleSheet='border: 1px solid black;'), 2, 2)
-        infoLayout.addWidget(QLabel('Rd. 4', styleSheet='border: 1px solid black;'), 2, 3)
+        infoLayout.addWidget(QLabel(pixmap=pixmap0), 2, 0)
+        infoLayout.addWidget(QLabel(pixmap=pixmap1), 2, 1)
+        infoLayout.addWidget(QLabel(pixmap=pixmap2), 2, 2)
+        infoLayout.addWidget(QLabel(pixmap=pixmap3), 2, 3)
 
         # Birdfeeder Layout
         self.drawBirdfeeder()
@@ -146,31 +163,29 @@ class WingspanAppWindow(QMainWindow):
     def drawBirdfeeder(self):
         clearLayout(self.birdfeederLayout)
         self.inFeederLayout = QHBoxLayout()
-        self.outOfFeederLayout = QHBoxLayout()
         self.takeFoodButton = QPushButton('Take')
         self.takeFoodButton.clicked.connect(self.takeFood)
         self.rollButton = QPushButton('Roll')
         self.rollButton.clicked.connect(self.rollFeeder)
         self.birdfeederLayout.addWidget(QLabel('In feeder:', styleSheet='font-weight: bold;'), 0, 0)
-        self.birdfeederLayout.addWidget(QLabel('Out of feeder:', styleSheet='font-weight: bold;'), 0, 1)
-        self.birdfeederLayout.addLayout(self.inFeederLayout, 1, 0)
-        self.birdfeederLayout.addLayout(self.outOfFeederLayout, 1, 1)
-        self.birdfeederLayout.addWidget(self.takeFoodButton, 2, 0)
-        self.birdfeederLayout.addWidget(self.rollButton, 2, 1)
-        for die in self.birdfeeder.in_feeder:
+        self.birdfeederLayout.addWidget(self.takeFoodButton, 0, 1)
+        self.birdfeederLayout.addWidget(self.rollButton, 0, 2)
+        self.birdfeederLayout.addLayout(self.inFeederLayout, 1, 0, 1, 3)
+        for die in self.birdfeeder.food:
             self.inFeederLayout.addWidget(QLabel(pixmap=QPixmap(food[die])))
-        for die in self.birdfeeder.out_of_feeder:
-            self.outOfFeederLayout.addWidget(QLabel(pixmap=QPixmap(food[die])))
 
     #===============================================================================
     def rollFeeder(self):
-        self.birdfeeder.roll()
+        try:
+            self.birdfeeder.reroll()
+        except Exception as e:
+            QMessageBox(text=repr(e)).exec()
         self.drawBirdfeeder()
 
     #===============================================================================
     def takeFood(self):
         from PyQt6.QtWidgets import QInputDialog
-        food, ok = QInputDialog().getItem(self, 'Choose food from birdfeeder', 'Choices', self.birdfeeder.in_feeder, 0, False)
+        food, ok = QInputDialog().getItem(self, 'Choose food from birdfeeder', 'Choices', self.birdfeeder.food, 0, False)
         if ok and food=='Invertebrate+Seed':
             # Another popup to choose which one to take
             food_to_remove = 'Invertebrate+Seed'
