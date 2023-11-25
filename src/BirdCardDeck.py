@@ -4,7 +4,9 @@ import random
 
 class BirdCardDeck:
     #===================================================================================================================
-    def __init__(self):
+    def __init__(self, expansions = None, seed=0):
+        if seed != 0:
+            random.seed(seed)
         self.facedown_cards = load_birdcards() # load the deck of all cards
         self.discarded = set() # no cards have been discarded yet
         self.faceup_cards = [None, None, None] # initialize faceup cards
@@ -45,3 +47,8 @@ class BirdCardDeck:
         elif card in self.discarded:
             raise Exception(f'{card} has already been discarded.')
         self.discarded.add(card)
+
+    #===================================================================================================================
+    # This only displays the bird tray
+    def __repr__(self):
+        return f"{self.faceup_cards}"

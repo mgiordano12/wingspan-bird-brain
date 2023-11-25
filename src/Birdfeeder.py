@@ -9,8 +9,8 @@ class Birdfeeder:
         self.reroll() # roll for 1st time
 
     def reroll(self):
-        if not self.can_be_rerolled:
-            raise Exception(f'Bird feeder cannot be re-rolled. Currently has {self.food}.')
+        # if not self.can_be_rerolled:
+        #     raise Exception(f'Bird feeder cannot be re-rolled. Currently has {self.food}.')
         
         del self.food # clear the birdfeeder
         self.food = [
