@@ -1,6 +1,6 @@
 class BirdCard:
 
-    #===================================================================================================================
+    #===========================================================================
     def __init__(
             self, common_name, scientific_name, expansion, color, power_category, power_text, predator, flocking, 
             bonus_card, victory_points, nest_type, egg_capacity, wingspan, forest, grassland, wetland, invertebrate, 
@@ -85,7 +85,19 @@ class BirdCard:
         self.cachedfood = 0
         self.laideggs = 0
 
-    #===================================================================================================================
+    #===========================================================================
+    def layegg(self):
+        if self.laideggs + 1 > self.egg_capacity:
+            raise ValueError(f'Cannot lay another egg on this bird. Already has {self.laideggs} out of {self.egg_capacity} eggs.')
+        self.laideggs += 1
+
+    #===========================================================================
+    def removegg(self):
+        if self.laideggs <= 1:
+            raise ValueError(f'Cannot remove an egg from this bird. Only has {self.laideggs} eggs on it.')
+        self.laideggs -= 1
+
+    #===========================================================================
     def __repr__(self):
         return f"{self.common_name}"
     # include , Eggs: {self.laideggs}/{self.egg_capacity}, Nest: {self.nest_type}, Power: {self.victory_points}?

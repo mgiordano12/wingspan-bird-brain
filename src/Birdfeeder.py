@@ -9,13 +9,12 @@ class Birdfeeder:
 
     def reroll(self):
         if len(set(self.food)) > 1:
-            raise Exception('Cannot reroll feeder if there is more than 1 type of food in it.')
+            raise Exception(f'Cannot reroll feeder if there is more than 1 type of food in it. Currently has {self.food}.')
         
         del self.food # clear the birdfeeder
         self.food = [
-            BirdfeederDie().faceup_side, BirdfeederDie().faceup_side, 
-            BirdfeederDie().faceup_side, BirdfeederDie().faceup_side, 
-            BirdfeederDie().faceup_side
+            BirdfeederDie().faceup_side, BirdfeederDie().faceup_side, BirdfeederDie().faceup_side, 
+            BirdfeederDie().faceup_side, BirdfeederDie().faceup_side
         ]
 
     def take(self, food):
@@ -24,4 +23,4 @@ class Birdfeeder:
         self.food.remove(food)
 
     def __repr__(self):
-        return f'BirdfeederDie: {self.food}'
+        return f'Birdfeeder: {self.food}'

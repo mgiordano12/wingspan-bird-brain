@@ -12,11 +12,11 @@ class Player:
             self.name = names.get_first_name()
         else:
             self.name = name
-        self.birdcards = []
-        self.bonuscards = []
+        self.birdcards = birdcards
+        self.bonuscards = bonuscards
         self.food = {'Fish' : 1, 'Rodent' : 1, 'Fruit' : 1, 'Invertebrate' : 1, 'Seed' : 1}
         self.gamemat = Gamemat()
-        self._assignStartingMaterials(birdcards,bonuscards)
+        # self._assignStartingMaterials(birdcards,bonuscards)
 
     def _assignStartingMaterials(self, birdcards, bonuscards):
         # This makes it modular but is kinda annoying since you'll have to have to choose 
@@ -48,21 +48,26 @@ class Player:
     def editBirdCards(self, cards, remove = False):
         """
         Add bird cards to hand
-        :param cards: Bird Cards to be added.  Can come in the form of a birdcard or list of birdcards
+        :param cards: Bird Cards to be added. Can come in the form of a birdcard or list of birdcards
         :return: none
         """
-        if (type(cards) is not BirdCard and type(cards) is not list) or (type(cards) is list and cards[0] is not BirdCard):
-            TypeError('If passing in a card, must be of type BirdCard.')
-        else:
-            for card in cards:
-                if remove:
-                    if card not in self.birdcards:
-                        raise Exception(f'{card} is already in the bird cards in this hand.')
-                    self.birdcards.remove(card)
-                else:
-                    if card in self.birdcards:
-                        raise Exception(f'{card} is not in this hand.')
-                    self.birdcards.append(card)
+        if (type(cards) is not BirdCard and type(cards) is not list):
+            raise TypeError('Must pass a single Birdcard or list of Birdcards.')
+        if (type(cards) is list and cards[0] is not BirdCard):
+            raise TypeError('If passing in a card, must be of type BirdCard.')
+
+        # Convert cards to list if it is not already
+        cards = [cards,] if type(cards) is not list else cards
+        
+        for card in cards:
+            if remove:
+                if card not in self.birdcards:
+                    raise Exception(f'{card} is already in the bird cards in this hand.')
+                self.birdcards.remove(card)
+            else:
+                if card in self.birdcards:
+                    raise Exception(f'{card} is not in this hand.')
+                self.birdcards.append(card)
 
     def editBonusCards(self, cards, remove = False):
         """
@@ -70,32 +75,38 @@ class Player:
         :param cards: Bonus Cards to be added.  Can come in the form of a bonuscard or list of bonuscards
         :return: none
         """
-        if (type(cards) is not BonusCard and type(cards) is not list) or (type(cards) is list and cards[0] is not BonusCard):
-            TypeError('If passing in a card, must be of type BonusCard.')
-        else:
-            for card in cards:
-                if remove:
-                    if card not in self.bonuscards:
-                        raise Exception(f'{card} is not in the bonus cards in this hand.')
-                    self.bonuscards.remove(card)
-                else:
-                    if card in self.bonuscards:
-                        raise Exception(f'{card} is already in the bonus cards in this hand.')
-                    self.bonuscards.append(card)
+        if (type(cards) is not BonusCard and type(cards) is not list):
+            raise TypeError('Cards must be a Bonuscard or list of Bonuscards')
+        if (type(cards) is list and cards[0] is not BonusCard):
+            raise TypeError('If passing in a card, must be of type BonusCard.')
+        
+        # Convert cards to list if it isn't already
+        cards = [cards,] if type(cards) is not list else cards
+        
+        for card in cards:
+            if remove:
+                if card not in self.bonuscards:
+                    raise Exception(f'{card} is not in the bonus cards in this hand.')
+                self.bonuscards.remove(card)
+            else:
+                if card in self.bonuscards:
+                    raise Exception(f'{card} is already in the bonus cards in this hand.')
+                self.bonuscards.append(card)
 
     def editFood(self, food : dict):
         """
         Add food to hand
-        :param: Food to be added to this hand.  Must be in the form of a dictionary with food : amount
+        :param: Food to be added to this hand. Must be in the form of a dictionary with food : amount
         :return: None
         """
         if type(food) is not dict:
-            TypeError('Must pass food as dict')
+            TypeError('`food` must be dict')
+
         for food_type in food.keys():
-            if food_type not in self.food.keys():
+            if food_type not in ['Invertebrate', 'Seed', 'Fruit', 'Fish', 'Rodent']:
                 TypeError(f'{food_type} is not a valid food type')
-            if type(food_type[food]) is not int:
-                TypeError(f'{food_type[food]} is not an integer')
+            if type(food[food_type]) is not int:
+                TypeError(f'{food[food_type]} is not an integer')
             self.food[food_type] += food[food_type]
 
 
