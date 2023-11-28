@@ -1,0 +1,26 @@
+Observation space for agent
+---------------------------
+bird cards by n cards 
+    vp
+    wingspan
+    nest type - OHE
+    egg capacity
+    laid eggs
+    cached food
+    tucked cards
+    power - OHE?
+    power color - OHE - predator, flocking, bonus (and/or BirdCard.power_category)
+    location
+        in my hand
+        picked up by n player - OHE
+        faceup - x 3 faceup positions
+        discarded
+        15 by n players - OHE
+        unknown
+        tucked
+    eligible bonuses - OHE
+bonus cards by n cards
+birdfeeder die x 5
+    which face is up - x6 - OHE
+    in feeder - bool
+eorg - OHE
