@@ -1,7 +1,4 @@
 from Player import Player
-from BirdCardDeck import BirdCardDeck
-from Birdfeeder import Birdfeeder
-from BonusCardDeck import BonusCardDeck
 from initialize_resources import initialize_resources
 
 #### TODO: Initializing one player now, but will need to extend to multiple players in the future
