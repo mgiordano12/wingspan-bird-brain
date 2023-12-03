@@ -7,6 +7,7 @@ Reinforcement learning model for wingspan game
 Just run it if you're on Linux, otherwise use WSL if on Windows.
 
 If you're using WSL on Windows follow these instructions to set up WSL: https://docs.docker.com/desktop/wsl/
+
 Note: Start by running `wsl --install` to install the Ubuntu distro for WSL.
 
 ```
