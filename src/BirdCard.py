@@ -1,8 +1,10 @@
+from Power import Power
+
 class BirdCard:
 
     #===========================================================================
     def __init__(
-            self, common_name, scientific_name, expansion, color, power_category, power_text, predator, flocking, 
+            self, common_name, scientific_name, expansion, color, power_category, power_text, power : Power, predator, flocking, 
             bonus_card, victory_points, nest_type, egg_capacity, wingspan, forest, grassland, wetland, invertebrate, 
             seed, fish, fruit, rodent, nectar, wild_food, slash_food_cost, asterisk_food_cost, total_food_cost, 
             anatomist, cartographer, historian, photographer, backyard_birder, bird_bander, bird_counter, bird_feeder, 
@@ -24,6 +26,7 @@ class BirdCard:
         # Power
         self.power_category = power_category
         self.power_text = power_text
+        self.power = power
         self.predator = predator # predator power (om nom nom)
         self.flocking = flocking # flocking power (tuck other cards)
         self.bonus_card = bonus_card # bonus card power (draw more bonus cards)
@@ -96,6 +99,10 @@ class BirdCard:
         if self.laideggs <= 1:
             raise ValueError(f'Cannot remove an egg from this bird. Only has {self.laideggs} eggs on it.')
         self.laideggs -= 1
+
+    #===========================================================================
+    def performpower(self):
+        self.power.performpower() # TODO: How do we specify what args we need to pass in?  Or is it unavoidable we have to do *args, **kwargs
 
     #===========================================================================
     def __repr__(self):

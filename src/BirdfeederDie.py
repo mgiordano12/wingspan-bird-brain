@@ -1,10 +1,11 @@
 import random
+from Gameplay_Constants import *
 
 class BirdfeederDie:
     def __init__(self, seed = 0):
         if seed != 0:
             random.seed(seed)
-        self.faces = ['Fish', 'Rodent', 'Fruit', 'Invertebrate', 'Seed', 'Invertebrate+Seed',]
+        self.faces = BIRDFEEDER_FACES
         self.roll()
     
     def roll(self):
