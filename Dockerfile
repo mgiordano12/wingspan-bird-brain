@@ -11,11 +11,14 @@ ENV DISPLAY=$DISPLAY
 # Define volume
 VOLUME ["/tmp/.X11-unix"]
 
-# Install Python 3, PyQt6
-RUN apt-get update && apt-get install -y python3-pyqt6
+# Install Python 3 and packages
+RUN apt-get update
+RUN apt-get install -y python3-pyqt6
+RUN apt-get install -y python3-requests
+RUN apt-get install -y python3-numpy
 
 # Create a working directory
-WORKDIR /app
+WORKDIR /app/src/ui
 
 # Copy the current directory contents into the container at /app
 COPY . /app
