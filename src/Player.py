@@ -1,17 +1,17 @@
 from Gamemat import Gamemat
 from BirdCard import BirdCard
 from BonusCard import BonusCard
-import numpy as np
-import names
+# import numpy as np
+# import names
 
 class Player:
     #===================================================================================================================
     def __init__(self, birdcards: list, bonuscards: list, name = None):
-        if name is None:
-            # Low likelihood this could assign players the same name at random...
-            self.name = names.get_first_name()
-        else:
-            self.name = name
+        # if name is None:
+        #     # Low likelihood this could assign players the same name at random...
+        #     self.name = names.get_first_name()
+        # else:
+        self.name = name
         self.birdcards = birdcards
         self.bonuscards = bonuscards
         self.food = {'Fish' : 1, 'Rodent' : 1, 'Fruit' : 1, 'Invertebrate' : 1, 'Seed' : 1}
