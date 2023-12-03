@@ -88,8 +88,11 @@ class WingspanAppWindow(QMainWindow):
         self.centralLayout = QGridLayout()
         self.info = QWidget(styleSheet='background-color: gray;')
         self.forest = QWidget(styleSheet='background-color: green;')
+        self.forestLayout = QGridLayout(self.forest)
         self.grassland = QWidget(styleSheet='background-color: yellow;')
+        self.grasslandLayout = QGridLayout(self.grassland)
         self.wetland = QWidget(styleSheet='background-color: blue;')
+        self.wetlandLayout = QGridLayout(self.wetland)
         self.birdDeckWidget = QWidget(styleSheet='background-color: gray;')
         self.birdDeckLayout = QGridLayout(self.birdDeckWidget)
         self.birdfeederLayout = QGridLayout()
@@ -97,33 +100,6 @@ class WingspanAppWindow(QMainWindow):
         self.birdHand = QWidget(styleSheet='background-color: gray;')
         self.birdHandLayout = QHBoxLayout(self.birdHand)
         self.bonusHandLayout = QHBoxLayout()
-
-        # Forest habitat layout
-        forestLayout = QHBoxLayout(self.forest)
-        forestLayout.addWidget(QLabel(pixmap=QPixmap('./images/habitat_forest.png')))
-        forestLayout.addWidget(QLabel(styleSheet='border: 1px solid black;'))
-        forestLayout.addWidget(QLabel(styleSheet='border: 1px solid black;'))
-        forestLayout.addWidget(QLabel(styleSheet='border: 1px solid black;'))
-        forestLayout.addWidget(QLabel(styleSheet='border: 1px solid black;'))
-        forestLayout.addWidget(QLabel(styleSheet='border: 1px solid black;'))
-
-        # Grassland habitat
-        grasslandLayout = QHBoxLayout(self.grassland)
-        grasslandLayout.addWidget(QLabel(pixmap=QPixmap('./images/habitat_grassland.png')))
-        grasslandLayout.addWidget(QLabel(styleSheet='border: 1px solid black;'))
-        grasslandLayout.addWidget(QLabel(styleSheet='border: 1px solid black;'))
-        grasslandLayout.addWidget(QLabel(styleSheet='border: 1px solid black;'))
-        grasslandLayout.addWidget(QLabel(styleSheet='border: 1px solid black;'))
-        grasslandLayout.addWidget(QLabel(styleSheet='border: 1px solid black;'))
-
-        # Wetland habitat
-        wetlandLayout = QHBoxLayout(self.wetland)
-        wetlandLayout.addWidget(QLabel(pixmap=QPixmap('./images/habitat_wetland.png')))
-        wetlandLayout.addWidget(QLabel(styleSheet='border: 1px solid black;'))
-        wetlandLayout.addWidget(QLabel(styleSheet='border: 1px solid black;'))
-        wetlandLayout.addWidget(QLabel(styleSheet='border: 1px solid black;'))
-        wetlandLayout.addWidget(QLabel(styleSheet='border: 1px solid black;'))
-        wetlandLayout.addWidget(QLabel(styleSheet='border: 1px solid black;'))
 
         # EORG Layout
         pixmap0 = QPixmap(eorgs[self.eorgMat.goals[0].name])
@@ -142,15 +118,14 @@ class WingspanAppWindow(QMainWindow):
         infoLayout.addWidget(QLabel(pixmap=pixmap2), 2, 2)
         infoLayout.addWidget(QLabel(pixmap=pixmap3), 2, 3)
 
-        
+        # Render fns for all of the other elements
+        self.renderForest() # forest habitat layout
+        self.renderGrassland() # grassland habitat
+        self.renderWetland() # wetland habitat    
         self.renderBirdfeeder() # Birdfeeder Layout
-
         self.renderBirdCardDeck() # Bird card deck layout
-
         self.renderFoodHand() # Food in hand layout
-
         self.renderBirdHand() # Bird cards in hand layout
-
         self.renderBonusHand() # Bonus cards in hand layout
         
         # Add layouts to central layout
@@ -179,6 +154,120 @@ class WingspanAppWindow(QMainWindow):
         self.setCentralWidget(scroll)
 
     #===========================================================================
+    # Forest and card-playing fns
+    def renderForest(self):
+        clearLayout(self.forestLayout)
+        forest = self.player.gamemat.habitats['forest']
+        self.forestLayout.addWidget(QLabel(pixmap=QPixmap('./images/habitat_forest.png')), 0, 0)
+        self.forestBtn = QPushButton('Play card', styleSheet='background-color: white;')
+        self.forestBtn.clicked.connect(lambda: self.playCard('forest'))
+        self.forestLayout.addWidget(self.forestBtn, 1, 0)
+        for i in range(5):
+            card = BirdCardWidget(forest[i]) if i < len(forest) else QLabel(styleSheet='border: 1px solid black;')
+            self.forestLayout.addWidget(card, 0, i+1, 2, 1)
+
+    def playCard(self, habitat):
+        cardstr, ok = QInputDialog().getItem(
+            self, f'Choose bird to play in {habitat}', 'Choices', 
+            [str(c) for c in self.player.birdcards], 0, False
+        )
+        if ok:
+            card = [c for c in self.player.birdcards if c.__repr__() == cardstr]
+            assert len(card) == 1
+            card = card[0]
+
+            # Determine egg cost and if player can pay it
+            eggcost = self.player.gamemat.determineeggcost(habitat)
+            player_laideggs = sum([c.laideggs for c in self.player.getplayedcards()])
+            if player_laideggs < eggcost:
+                raise Exception(f'Player cannot pay egg cost. Player only has {player_laideggs} of {eggcost} required eggs.')
+
+            # Choose eggs to spend
+            cardstospendfrom = list()
+            while len(cardstospendfrom) < eggcost:
+                chosen = self.choosecardtospendegg()
+                if chosen is not None:
+                    cardstospendfrom.append(chosen)
+
+            # Remove the eggs from the choosen cards
+            try:
+                for c in cardstospendfrom:
+                    c.removeegg()
+                self.renderForest()
+                self.renderGrassland()
+                self.renderWetland()
+            except Exception as e:
+                QMessageBox(text=repr(e)).exec()
+            
+            try:
+                self.player.playcard(card, habitat)
+                self.renderForest()
+                self.renderGrassland()
+                self.renderWetland()
+                self.renderBirdHand()
+            except Exception as e:
+                QMessageBox(text=repr(e)).exec()
+
+    def choosecardtospendegg(self):
+        cardstr, ok = QInputDialog().getItem(
+            self, 'Choose bird to take egg from', 'Choices', 
+            [str(c) for c in self.player.getplayedcards() if c.laideggs > 0], 
+            0, False
+        )
+        if ok:
+            card = [c for c in self.player.getplayedcards() if c.__repr__() == cardstr]
+            assert len(card) == 1
+            card = card[0]
+        else:
+            card = None
+        return card
+                
+    #===========================================================================
+    # Grassland & egg-laying fn
+    def renderGrassland(self):
+        clearLayout(self.grasslandLayout)
+        self.grasslandLayout.addWidget(QLabel(pixmap=QPixmap('./images/habitat_grassland.png')), 0, 0)
+        self.grasslandPlayCardBtn = QPushButton('Play card', styleSheet='background-color: white;')
+        self.grasslandPlayCardBtn.clicked.connect(lambda: self.playCard('grassland'))
+        self.grasslandLayout.addWidget(self.grasslandPlayCardBtn, 1, 0)
+        self.grasslandLayEggsBtn = QPushButton('Lay eggs', styleSheet='background-color: white;')
+        self.grasslandLayEggsBtn.clicked.connect(self.layeggs)
+        self.grasslandLayout.addWidget(self.grasslandLayEggsBtn, 2, 0)
+        grassland = self.player.gamemat.habitats['grassland']
+        for i in range(5):
+            card = BirdCardWidget(grassland[i]) if i < len(grassland) else QLabel(styleSheet='border: 1px solid black;')
+            self.grasslandLayout.addWidget(card, 0, i+1, 3, 1)
+    
+    def layeggs(self):
+        cardstr, ok = QInputDialog().getItem(
+            self, 'Choose bird to lay egg on', 'Choices', 
+            [str(c) for h in self.player.gamemat.habitats.values() for c in h], 
+            0, False
+        )
+        if ok:
+            card = [c for c in self.player.getplayedcards() if c.__repr__() == cardstr]
+            assert len(card) == 1
+            card = card[0]
+            self.player.layegg(card)
+            # Render habitats to show new egg
+            self.renderForest()
+            self.renderGrassland()
+            self.renderWetland()
+    
+    #===========================================================================
+    # Wetland
+    def renderWetland(self):
+        clearLayout(self.wetlandLayout)
+        wetland = self.player.gamemat.habitats['wetland']
+        self.wetlandLayout.addWidget(QLabel(pixmap=QPixmap('./images/habitat_wetland.png')), 0, 0)
+        self.wetlandBtn = QPushButton('Play card', styleSheet='background-color: white;')
+        self.wetlandBtn.clicked.connect(lambda: self.playCard('wetland'))
+        self.wetlandLayout.addWidget(self.wetlandBtn, 1, 0)
+        for i in range(5):
+            card = BirdCardWidget(wetland[i]) if i < len(wetland) else QLabel(styleSheet='border: 1px solid black;')
+            self.wetlandLayout.addWidget(card, 0, i+1, 2, 1)
+    
+    #===========================================================================
     # Birdfeeder
     def renderBirdfeeder(self):
         clearLayout(self.birdfeederLayout)
@@ -192,7 +281,7 @@ class WingspanAppWindow(QMainWindow):
         self.birdfeederLayout.addWidget(self.rollButton, 0, 2)
         self.birdfeederLayout.addLayout(self.inFeederLayout, 1, 0, 1, 3)
         for die in self.birdfeeder.food:
-            self.inFeederLayout.addWidget(QLabel(pixmap=QPixmap(food[die]).scaled(20, 20, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)))
+            self.inFeederLayout.addWidget(QLabel(pixmap=QPixmap(food[die])))#.scaled(20, 20, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)))
 
     def rollFeeder(self):
         try:
@@ -222,15 +311,15 @@ class WingspanAppWindow(QMainWindow):
     def renderFoodHand(self):
         clearLayout(self.foodHandLayout)
         self.foodHandLayout.addWidget(QLabel('Food in hand', styleSheet='font-weight: bold;'), 0, 0)
-        self.foodHandLayout.addWidget(QLabel(pixmap=QPixmap('./images/food_invertebrate.png').scaled(20, 20, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)), 0, 2)
+        self.foodHandLayout.addWidget(QLabel(pixmap=QPixmap('./images/food_invertebrate.png').scaled(40, 40, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)), 0, 2)
         self.foodHandLayout.addWidget(QLabel(f'x {self.player.food["Invertebrate"]}'), 0, 3)
-        self.foodHandLayout.addWidget(QLabel(pixmap=QPixmap('./images/food_seed.png').scaled(20, 20, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)), 0, 4)
+        self.foodHandLayout.addWidget(QLabel(pixmap=QPixmap('./images/food_seed.png').scaled(40, 40, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)), 0, 4)
         self.foodHandLayout.addWidget(QLabel(f'x {self.player.food["Seed"]}'), 0, 5)
-        self.foodHandLayout.addWidget(QLabel(pixmap=QPixmap('./images/food_fish.png').scaled(20, 20, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)), 1, 0)
+        self.foodHandLayout.addWidget(QLabel(pixmap=QPixmap('./images/food_fish.png').scaled(40, 40, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)), 1, 0)
         self.foodHandLayout.addWidget(QLabel(f'x {self.player.food["Fish"]}'), 1, 1)
-        self.foodHandLayout.addWidget(QLabel(pixmap=QPixmap('./images/food_rodent.png').scaled(20, 20, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)), 1, 2)
+        self.foodHandLayout.addWidget(QLabel(pixmap=QPixmap('./images/food_rodent.png').scaled(40, 40, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)), 1, 2)
         self.foodHandLayout.addWidget(QLabel(f'x {self.player.food["Rodent"]}'), 1, 3)
-        self.foodHandLayout.addWidget(QLabel(pixmap=QPixmap('./images/food_fruit.png').scaled(20, 20, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)), 1, 4)
+        self.foodHandLayout.addWidget(QLabel(pixmap=QPixmap('./images/food_fruit.png').scaled(40, 40, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)), 1, 4)
         self.foodHandLayout.addWidget(QLabel(f'x {self.player.food["Fruit"]}'), 1, 5)
 
     #===========================================================================

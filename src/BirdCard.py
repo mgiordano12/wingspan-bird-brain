@@ -81,21 +81,33 @@ class BirdCard:
         self.additional_rulings = additional_rulings
 
         # For cards in play
-        self.tuckedcards = 0
+        self.ntuckedcards = 0
+        self.tuckedcards = list()
         self.cachedfood = 0
         self.laideggs = 0
 
     #===========================================================================
-    def layegg(self):
-        if self.laideggs + 1 > self.egg_capacity:
+    def layegg(self, n=1):
+        if self.laideggs + n > self.egg_capacity:
             raise ValueError(f'Cannot lay another egg on this bird. Already has {self.laideggs} out of {self.egg_capacity} eggs.')
-        self.laideggs += 1
+        self.laideggs += n
 
     #===========================================================================
-    def removegg(self):
-        if self.laideggs <= 1:
+    def removeegg(self, n=1):
+        if self.laideggs < n:
             raise ValueError(f'Cannot remove an egg from this bird. Only has {self.laideggs} eggs on it.')
-        self.laideggs -= 1
+        self.laideggs -= n
+
+    #===========================================================================
+    def cachefood(self, n=1):
+        self.cachedfood += n
+
+    #===========================================================================
+    def tuckcard(self, card):
+        if not isinstance(card, BirdCard):
+            raise Exception('`card` must be a BirdCard.')
+        self.ntuckedcards += 1
+        self.tuckedcards.append(card)
 
     #===========================================================================
     def __repr__(self):

@@ -22,6 +22,7 @@ class BirdCardWidget(QWidget):
         if not isinstance(birdcard, BirdCard):
             raise TypeError('BirdCardWidget must be initialized with a BirdCard object.')
         super().__init__()
+        
         layout = QVBoxLayout(self)
 
         # Name, VP, and wingspan
