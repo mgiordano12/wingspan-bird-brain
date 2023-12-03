@@ -1,0 +1,124 @@
+Brown/White Powers we have to implement.
+
+AllDrawCard:
+'All players draw 1 [card] from the deck.'
+
+AllGainFood:
+ 'All players gain 1 [fish] from the supply.'
+ 'All players gain 1 [fruit] from the supply.'
+ 'All players gain 1 [invertebrate] from the supply.'
+ 'All players gain 1 [seed] from the supply.'
+
+AllLayNest:
+ 'All players lay 1 [egg] on any 1 [bowl] bird. You may lay 1 [egg] on 1 additional [bowl] bird.'
+ 'All players lay 1 [egg] on any 1 [cavity] bird. You may lay 1 [egg] on 1 additional [cavity] bird.'
+ 'All players lay 1 [egg] on any 1 [ground] bird. You may lay 1 [egg] on 1 additional [ground] bird.'
+
+Cache:
+ 'Cache 1 [seed] from the supply on this bird.'
+ 'When another player takes the "gain food" action, if they gain any number of [rodent], cache 1 [rodent] from the supply on this bird.'   
+
+EggsForFood:
+ 'Discard 1 [egg] from any of your other birds to gain 1 [wild] from the supply.'
+ 'Discard 1 [egg] from any of your other birds to gain 2 [wild] from the supply.'
+
+EggsForCards:
+ 'Discard 1 [egg] to draw 2 [card].'
+
+FoodForTuck:
+ 'Discard 1 [fish] to tuck 2 [card] from the deck behind this bird.'
+ 'Discard 1 [seed] to tuck 2 [card] from the deck behind this bird.'
+
+DrawCard:
+ 'Draw 1 [card].'
+ 'Draw 2 [card].'
+
+DrawAndDiscard:
+ 'Draw 1 [card]. If you do, discard 1 [card] from your hand at the end of your turn.'
+ 'Draw 2 [card]. If you do, discard 1 [card] from your hand at the end of your turn.'
+
+DrawAndDiscardBonusCards:
+ 'Draw 2 new bonus cards and keep 1.'
+
+DrawSelectAndMove:
+ 'Draw [card] equal to the number of players +1. Starting with you and proceeding clockwise, each player selects 1 of those cards and places it in their hand. You keep the extra card.'
+
+AllSelectFood:
+ 'Each player gains 1 [die] from the birdfeeder, starting with the player of your choice.'
+
+GainFood:
+ 'Gain 1 [fruit] from the supply.'
+ 'Gain 1 [invertebrate] from the supply.'
+ 'Gain 1 [seed] from the supply.'
+ 'Gain 3 [fish] from the supply.' 
+ 'Gain 3 [seed] from the supply.'
+ 'When another player plays a bird in their [forest], gain 1 [invertebrate] from the supply.'
+ 'When another player plays a bird in their [wetland], gain 1 [fish] from the supply.'
+
+GainAvailableFood:
+ 'Gain 1 [invertebrate] from the birdfeeder, if available.'
+ 'Gain 1 [invertebrate] or [fruit] from the birdfeeder, if available.'
+ 'Gain 1 [seed] or [fruit] from the birdfeeder, if available.'
+ 'Gain all [fish] that are in the birdfeeder.'
+ 'Gain all [invertebrate] that are in the birdfeeder.'
+ "When another player's [predator] succeeds, gain 1 [die] from the birdfeeder."
+
+GainAvailableFoodAndCache:
+ 'Gain 1 [seed] from the birdfeeder, if available. You may cache it on this bird.'
+
+MoveHabitats:
+ 'If this bird is to the right of all other birds in its habitat, move it to another habitat.'
+
+LayEggs:
+ 'Lay 1 [egg] on any bird.'
+ 'Lay 1 [egg] on this bird.'
+
+LayEggsOnNest:
+ 'Lay 1 [egg] on each of your birds with a [bowl] nest.'
+ 'Lay 1 [egg] on each of your birds with a [ground] nest.'
+ 'Lay 1 [egg] on each of your birds with a [platform] nest.'
+ 'When another player takes the "lay eggs" action, lay 1 [egg] on a bird with a [bowl] nest.'
+ 'When another player takes the "lay eggs" action, lay 1 [egg] on another bird with a [cavity] nest.'
+ 'When another player takes the "lay eggs" action, lay 1 [egg] on another bird with a [ground] nest.'
+
+PredatorTuck:
+ 'Look at a [card] from the deck. If less than 100cm, tuck it behind this bird. If not, discard it.'
+ 'Look at a [card] from the deck. If less than 50cm, tuck it behind this bird. If not, discard it.'
+ 'Look at a [card] from the deck. If less than 75cm, tuck it behind this bird. If not, discard it.'
+
+PlayAdditionalBird:
+ "Play an additional bird in this bird's habitat. Pay its normal cost."
+ 'Play an additional bird in your [forest]. Pay its normal cost.'
+ 'Play an additional bird in your [grassland]. Pay its normal cost.'
+ 'Play an additional bird in your [wetland]. Pay its normal cost.'
+
+FewestBirdsGetFood:
+ 'Player(s) with the fewest birds in their [forest] gain 1 [die] from birdfeeder.'
+
+FewestBirdsGetCard:
+ 'Player(s) with the fewest birds in their [wetland] draw 1 [card].'
+
+RepeatPower:
+ 'Repeat 1 [predator] power in this habitat.'
+ 'Repeat a brown power on another bird in this habitat.'
+
+PredatorRoll:
+ 'Roll all dice not in birdfeeder. If any are [fish], cache 1 [fish] from the supply on this bird.'
+ 'Roll all dice not in birdfeeder. If any are [rodent], cache 1 [rodent] from the supply on this bird.'
+
+TradeFood:
+ 'Trade 1 [wild] for any other type from the supply.'
+
+Tuck:
+ 'When another player plays a bird in their [grassland], tuck 1 [card] from your hand behind this bird.'
+
+TuckForFood:
+ 'Tuck 1 [card] from your hand behind this bird. If you do, gain 1 [fruit] from the supply.'
+ 'Tuck 1 [card] from your hand behind this bird. If you do, gain 1 [invertebrate] or [seed] from the supply.'
+ 'Tuck 1 [card] from your hand behind this bird. If you do, gain 1 [seed] from the supply.'
+
+TuckForEggs:
+ 'Tuck 1 [card] from your hand behind this bird. If you do, you may also lay 1 [egg] on this bird.'
+
+TuckAndDraw:
+ 'Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card].'

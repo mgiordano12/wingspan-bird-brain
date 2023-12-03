@@ -30,6 +30,8 @@ class BirdCardDeck:
 
     #===================================================================================================================
     def draw_facedown_cards(self, n = 1):
+        if n > len(self.facedown_cards):
+            raise StopIteration
         cards = []
         for i in range(n):
             card = random.sample(self.facedown_cards, 1)[0]
@@ -52,3 +54,11 @@ class BirdCardDeck:
     # This only displays the bird tray
     def __repr__(self):
         return f"{self.faceup_cards}"
+    
+    # Allow for iteration
+    def __iter__(self):
+        return self
+
+    # FIXME: Should draw facedown cards just be implemented here?
+    def __next__(self):
+        return self.draw_facedown_cards()

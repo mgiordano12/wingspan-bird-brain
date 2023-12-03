@@ -1,5 +1,6 @@
 from Player import Player
 from initialize_resources import initialize_resources
+import numpy as np
 
 #### TODO: Initializing one player now, but will need to extend to multiple players in the future
 # I'm going to make this a list of one player in the hopes that makes switching to multiple easier in the future
@@ -18,3 +19,4 @@ print(f"Birdfeeder: {birdfeeder}")
 print(f"Deck {deck}")
 print(f"End Goals {end_of_round_goals}")
 print(players[0])
+print(np.unique([card.power_text for card in deck if card.power_category is not None]))
