@@ -1,12 +1,13 @@
 from Gamemat import Gamemat
 from BirdCard import BirdCard
 from BonusCard import BonusCard
+from Gameplay_Constants import *
 import numpy as np
 import names
 
 class Player:
     #===================================================================================================================
-    def __init__(self, birdcards: list, bonuscards: list, name = None):
+    def __init__(self, birdcards: list, bonuscards: list, name = None, isCPU = False):
         if name is None:
             # Low likelihood this could assign players the same name at random...
             self.name = names.get_first_name()
@@ -15,8 +16,12 @@ class Player:
         self.birdcards = birdcards
         self.bonuscards = bonuscards
         self.food = {'Fish' : 1, 'Rodent' : 1, 'Fruit' : 1, 'Invertebrate' : 1, 'Seed' : 1}
+        self.isCPU = isCPU
         self.gamemat = Gamemat()
         # self._assignStartingMaterials(birdcards,bonuscards)
+
+    def getGameMat(self):
+        return self.gamemat
 
     def _assignStartingMaterials(self, birdcards, bonuscards):
         # This makes it modular but is kinda annoying since you'll have to have to choose 
@@ -103,10 +108,15 @@ class Player:
             TypeError('`food` must be dict')
 
         for food_type in food.keys():
-            if food_type not in ['Invertebrate', 'Seed', 'Fruit', 'Fish', 'Rodent']:
+            if food_type not in FOOD_TYPES:
                 TypeError(f'{food_type} is not a valid food type')
             if type(food[food_type]) is not int:
                 TypeError(f'{food[food_type]} is not an integer')
+            if food_type == 'wild':
+                for i in range(food[food_type]):
+                    # TODO: This should call a function on the player object which will fork into the appropriate input
+                    # depending on if self.isCPU is true
+                    pass
             self.food[food_type] += food[food_type]
 
 

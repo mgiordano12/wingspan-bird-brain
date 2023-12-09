@@ -3,12 +3,6 @@ Powers we have to implement.
 AllDrawCard:
 'All players draw 1 [card] from the deck.'
 
-AllGainFood:
- 'All players gain 1 [fish] from the supply.'
- 'All players gain 1 [fruit] from the supply.'
- 'All players gain 1 [invertebrate] from the supply.'
- 'All players gain 1 [seed] from the supply.'
-
 AllLayNest:
  'All players lay 1 [egg] on any 1 [bowl] bird. You may lay 1 [egg] on 1 additional [bowl] bird.'
  'All players lay 1 [egg] on any 1 [cavity] bird. You may lay 1 [egg] on 1 additional [cavity] bird.'
@@ -54,6 +48,12 @@ DONE GainFood:
  'Gain 3 [seed] from the supply.'
  'When another player plays a bird in their [forest], gain 1 [invertebrate] from the supply.'
  'When another player plays a bird in their [wetland], gain 1 [fish] from the supply.'
+
+DONE AllGainFood:
+ 'All players gain 1 [fish] from the supply.'
+ 'All players gain 1 [fruit] from the supply.'
+ 'All players gain 1 [invertebrate] from the supply.'
+ 'All players gain 1 [seed] from the supply.'
 
 GainAvailableFood:
  'Gain 1 [invertebrate] from the birdfeeder, if available.'
