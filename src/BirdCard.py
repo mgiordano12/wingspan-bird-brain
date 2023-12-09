@@ -1,10 +1,11 @@
 from Power import Power
+from Gameplay_Constants import *
 
 class BirdCard:
 
     #===========================================================================
     def __init__(
-            self, common_name, scientific_name, expansion, color, power_category, power_text, power : Power, predator, flocking, 
+            self, common_name, scientific_name, expansion, color, power_category, power_text, predator, flocking, 
             bonus_card, victory_points, nest_type, egg_capacity, wingspan, forest, grassland, wetland, invertebrate, 
             seed, fish, fruit, rodent, nectar, wild_food, slash_food_cost, asterisk_food_cost, total_food_cost, 
             anatomist, cartographer, historian, photographer, backyard_birder, bird_bander, bird_counter, bird_feeder, 
@@ -26,7 +27,8 @@ class BirdCard:
         # Power
         self.power_category = power_category
         self.power_text = power_text
-        self.power = power
+        from PowerDict import bird_power_dict # This needs to be imported here to avoid circular module dependencies
+        self.power = bird_power_dict[self.power_text]
         self.predator = predator # predator power (om nom nom)
         self.flocking = flocking # flocking power (tuck other cards)
         self.bonus_card = bonus_card # bonus card power (draw more bonus cards)

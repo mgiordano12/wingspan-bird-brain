@@ -1,5 +1,5 @@
-import Power
-import Player
+from Power import Power
+from Player import Player
 from Gameplay_Constants import *
 
 class PowerGainFood(Power):

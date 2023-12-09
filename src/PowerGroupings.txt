@@ -1,4 +1,4 @@
-Brown/White Powers we have to implement.
+Powers we have to implement.
 
 AllDrawCard:
 'All players draw 1 [card] from the deck.'
@@ -46,7 +46,7 @@ DrawSelectAndMove:
 AllSelectFood:
  'Each player gains 1 [die] from the birdfeeder, starting with the player of your choice.'
 
-GainFood:
+DONE GainFood:
  'Gain 1 [fruit] from the supply.'
  'Gain 1 [invertebrate] from the supply.'
  'Gain 1 [seed] from the supply.'

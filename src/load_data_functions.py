@@ -20,7 +20,6 @@ def load_birdcards(deck_names = ['originalcore']):
                 color=i["Color"],
                 power_category=i["PowerCategory"],
                 power_text=i["Power text"],
-                power = Power(), # TODO: Depending on the power text, we will have to initialize the correct Power Function.  This is just the superclass which doesn't do anything right now.
                 predator=True if i["Predator"]=="X" else False,
                 flocking=True if i["Flocking"]=="X" else False,
                 bonus_card=True if i["Bonus card"]=="X" else False,
