@@ -2,9 +2,10 @@ import sys
 sys.path.append('../')
 from BirdCardWidget import BirdCardWidget
 from BonusCardWidget import BonusCardWidget
-from PyQt6.QtWidgets import QGridLayout, QDialog, QListWidget, QAbstractItemView, QDialogButtonBox
+from PyQt6.QtWidgets import QGridLayout, QDialog, QListWidget, QAbstractItemView, QDialogButtonBox, QMainWindow
 
 class StartingMaterialsPopup(QDialog):
+
     def __init__(self, birdcards, bonuscards):
         super().__init__()
         self.birdcards = birdcards
@@ -38,13 +39,9 @@ class StartingMaterialsPopup(QDialog):
         layout.addWidget(self.buttonBox, 2, 4)
 
     def getInputs(self):
-        birdcards = [
-            c for item in self.birdCardSelect.selectedItems() 
-            for c in self.birdcards if c.common_name==item.text()
-        ]
-        bonuscards = [
-            c for item in self.bonusCardSelect.selectedItems() 
-            for c in self.bonuscards if c.name==item.text()
-        ]
+        birdcards = [c for item in self.birdCardSelect.selectedItems() 
+                     for c in self.birdcards if c.common_name==item.text()]
+        bonuscards = [c for item in self.bonusCardSelect.selectedItems() 
+                      for c in self.bonuscards if c.name==item.text()]
         foods = [item.text() for item in self.foodSelect.selectedItems()]
         return birdcards, bonuscards, foods
