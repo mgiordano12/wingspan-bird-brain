@@ -6,7 +6,7 @@ from BonusCard import BonusCard
 
 class Player:
     #===================================================================================================================
-    def __init__(self, birdcards: list, bonuscards: list, food: dict, name = None):
+    def __init__(self, birdcards: list, bonuscards: list, name = None):
         # if name is None:
         #     # Low likelihood this could assign players the same name at random...
         #     self.name = names.get_first_name()
@@ -14,7 +14,7 @@ class Player:
         self.name = name
         self.birdcards = birdcards
         self.bonuscards = bonuscards
-        self.food = food # {'Fish' : 1, 'Rodent' : 1, 'Fruit' : 1, 'Invertebrate' : 1, 'Seed' : 1}
+        self.food = {'Fish' : 1, 'Rodent' : 1, 'Fruit' : 1, 'Invertebrate' : 1, 'Seed' : 1}
         self.gamemat = Gamemat()
         # self._assignStartingMaterials(birdcards,bonuscards)
 
@@ -152,9 +152,6 @@ class Player:
 
     #===========================================================================
     def __repr__(self):
-        return f'Player(Name: {self.name}\n'+\
-               f'Bird Cards: {self.birdcards}\n'+\
-               f'Bonus Cards: {self.bonuscards}\n'+\
-               f'Food: {self.food}\n'+\
-               f'GameMat: \n{self.gamemat}\n'+\
-               f'Eggs: {self.gamemat.eggs}'
+        return (f"Player(Name: {self.name}, Bird Cards: {self.birdcards}, Bonus Cards: {self.bonuscards},"
+                f"GameMat: {self.gamemat}, "
+                f"Food Tokens: {self.food}, Eggs: {self.gamemat.eggs}")
