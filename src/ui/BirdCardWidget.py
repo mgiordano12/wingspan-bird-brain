@@ -1,20 +1,11 @@
 import sys
-sys.path.append('../')
+sys.path.append('./src/')
+sys.path.append('./src/ui/')
 from BirdCard import BirdCard
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QWidget, QLabel, QHBoxLayout, QVBoxLayout
 from PyQt6.QtGui import QPixmap
-
-food_images = {
-    'Fish': './images/food_fish.png', 'Rodent': './images/food_rodent.png', 
-    'Fruit': './images/food_fruit.png', 'Invertebrate': './images/food_invertebrate.png', 
-    'Seed': './images/food_seed.png', 'Wild': './images/food_wild.png',
-}
-nest_images = {
-    'Bowl': './images/nest_bowl.png', 'Cavity': './images/nest_cavity.png',
-    'Ground': './images/nest_ground.png', 'Platform': './images/nest_platform.png',
-    'Wild': './images/nest_star.png'
-}
+from imagepaths import nest_paths, food_paths, habitat_paths
 
 class BirdCardWidget(QWidget):
 
@@ -33,11 +24,11 @@ class BirdCardWidget(QWidget):
         habitatLayout = QHBoxLayout()
         layout.addLayout(habitatLayout)
         if birdcard.forest:
-            habitatLayout.addWidget(QLabel(pixmap=QPixmap('./images/habitat_forest.png').scaled(20, 20, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)))
+            habitatLayout.addWidget(QLabel(pixmap=QPixmap(habitat_paths['Forest']).scaled(20, 20, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)))
         if birdcard.grassland:
-            habitatLayout.addWidget(QLabel(pixmap=QPixmap('./images/habitat_grassland.png').scaled(20, 20, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)))
+            habitatLayout.addWidget(QLabel(pixmap=QPixmap(habitat_paths['Grassland']).scaled(20, 20, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)))
         if birdcard.wetland:
-            habitatLayout.addWidget(QLabel(pixmap=QPixmap('./images/habitat_wetland.png').scaled(20, 20, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)))
+            habitatLayout.addWidget(QLabel(pixmap=QPixmap(habitat_paths['Wetland']).scaled(20, 20, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)))
         
         # Food
         foodLayout = QHBoxLayout()
@@ -52,7 +43,7 @@ class BirdCardWidget(QWidget):
         target = sum([num for _, num in foods]) # number of food tokens to be displayed
         for food, num in foods:
             for i in range(num):
-                foodLayout.addWidget(QLabel(pixmap=QPixmap(food_images[food]).scaled(20, 20, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)))
+                foodLayout.addWidget(QLabel(pixmap=QPixmap(food_paths[food]).scaled(20, 20, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)))
                 food_added += 1
                 if food_added < target:
                     foodLayout.addWidget(QLabel(sep, styleSheet='font-weight: bold;'))
@@ -63,12 +54,12 @@ class BirdCardWidget(QWidget):
         if birdcard.nest_type == 'None':
             nest = QLabel('None', styleSheet='border: 1px solid black;')
         else:
-            nest = QLabel(pixmap=QPixmap(nest_images[birdcard.nest_type]).scaled(20, 20, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
+            nest = QLabel(pixmap=QPixmap(nest_paths[birdcard.nest_type]).scaled(20, 20, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
         nestLayout.addWidget(nest)
         for i in range(birdcard.laideggs):
-            nestLayout.addWidget(QLabel(pixmap=QPixmap('./images/game_smallegg.png').scaled(20, 20, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)))
+            nestLayout.addWidget(QLabel(pixmap=QPixmap('./src/ui/images/game_smallegg.png').scaled(20, 20, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)))
         for i in range(birdcard.egg_capacity - birdcard.laideggs):
-            nestLayout.addWidget(QLabel(pixmap=QPixmap('./images/game_egg.png').scaled(20, 20, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)))
+            nestLayout.addWidget(QLabel(pixmap=QPixmap('./src/ui/images/game_egg.png').scaled(20, 20, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)))
 
         # Power text
         layout.addWidget(QLabel(birdcard.power_text, wordWrap=True))
