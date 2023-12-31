@@ -23,7 +23,7 @@ FoodForTuck:
  'Discard 1 [fish] to tuck 2 [card] from the deck behind this bird.'
  'Discard 1 [seed] to tuck 2 [card] from the deck behind this bird.'
 
-DrawCard:
+DONE DrawCard:
  'Draw 1 [card].'
  'Draw 2 [card].'
 

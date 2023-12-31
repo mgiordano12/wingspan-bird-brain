@@ -12,8 +12,8 @@ class Birdfeeder:
         if seed != 0:
             self.seeded = True
             # Produce food list that is bigger than we could reasonably go through in a game
-            self.food_destiny = [BirdfeederDie(seed = random.randint(1,100000)).faceup_side for _ in range(np.sum(NUMBER_OF_TURNS) \
-                                                                        *NUMBER_OF_ROUNDS*MAX_NUMBER_OF_PLAYERS*BUFFER_MULTIPLIER)]
+            self.food_destiny = [BirdfeederDie(seed = random.randint(1,100000)).faceup_side\
+                                 for _ in range(np.sum(NUMBER_OF_TURNS)*NUMBER_OF_ROUNDS*MAX_NUMBER_OF_PLAYERS*BUFFER_MULTIPLIER)]
             self.num_rerolls = 0
         else:
             self.seeded = False
