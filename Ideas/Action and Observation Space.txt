@@ -1,20 +1,44 @@
 This is how someone implemented chess's action space and observation space: https://github.com/genyrosk/gym-chess/blob/master/gym_chess/envs/chess_v1.py
-It actually has a much smaller action space than wingspan...
 
-I'm also admittedly not sure how much of this is action space versus observation space?
+I suggest we model this as a one player game to start... 
+
+FYI I think PettingZoo (Gym offbranch) is better suited for multi-env games and we should use it: https://pettingzoo.farama.org/content/environment_creation/)
+
+This is how it was done in PettingZoo for Chess: https://pettingzoo.farama.org/environments/classic/chess/
+
+
 
 Action Space
-play_bird = 15 (places available) * white_power_space (this gets really large when you consider that one of the 
-			cards allows you to play another bird...)
-gain_food = 5 (number of unique foods)^4 (# of total possible foods, or should this be 4+3+2+1 since we don't know how many we are taking?) 
-	 * 2 (give up a bird card for another food?)
-	* number_of_bird_cards (which card?)
-	* brown_power_action_space^5 (I could have up to five cards, all with brown powers...)
-lay_eggs = ( 15 (number of places on the mat we could lay an egg) * number_of_bird_cards ) ^ (5) (number of possible eggs to lay) * 
-	brown_power_action_space^5 (I could have up to five cards, all with brown powers...) * 2 (give up a food for an egg?) * 5 (which food?)
-draw_cards = 
+
+This is very likely a good way to help define spaces in a readable fashion: https://gymnasium.farama.org/api/spaces/composite/
+
+Maybe we can define decisions in a more piecemeal fashion.  Every power is a separate step, every food choice is a separate step, etc.  Let the game tell you what is legal (via the action 
+mask) and the network will learn?
+
+play_bird = 15 (places available) * #unique bird cards (you could also do the 20 spots in your hand... but I feel like this will learn faster)
+
+gain_food = 5 one-hot-encoded die.  Each gain food choice is a new step.  The network should learn through the observation space that it gains more food per turn if more stuff is in the forest...
+
+lay_eggs = 15 (places available).  Each egg placement is a new step.  Again, the network should learn it gets more if more stuff is in the grassland...
+
+draw_cards = #unique bird cards (and mask out what's not shown) + 1 (random)
+
 
 
 Observation space
 
-number_of_bird_cards ^ (hand size limit) * number_bird_cards^(15 (spaces)
+This is very likely a good way to help define spaces in a readable fashion: https://gymnasium.farama.org/api/spaces/composite/
+
+15 (bird card positions) x #unique bird cards
++
+4 (end of round goal spots) x #unique goals
++
+5 (birdfeeder die) x 7 (sides of die + empty)
++
+20 (I suggest we arbitrarily limit # of cards in hand) x # unique bird cards
++
+5 ints (nums of each type of int).  We might have to be careful with this since it's a diff data type
++
+one-hot-encoded round number
++
+number turns left in a round
