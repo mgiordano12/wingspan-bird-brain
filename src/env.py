@@ -110,26 +110,24 @@ class raw_env(AECEnv):
         )
         return action_space
 
-    ### HERE and below I have not yet touched.  This is just example code
-    # def render(self):
-    #     """
-    #     Renders the environment. In human mode, it can print to terminal, open
-    #     up a graphical window, or open up some other display that a human can see and understand.
-    #     """
-    #     if self.render_mode is None:
-    #         gymnasium.logger.warn(
-    #             "You are calling render method without specifying any render mode."
-    #         )
-    #         return
+    def render(self):
+        """
+        Renders the environment. In human mode, it can print to terminal, open
+        up a graphical window, or open up some other display that a human can see and understand.
+        """
+        ### TODO: @Owen- connect up with your GUI
 
-    #     if len(self.agents) == 2:
-    #         string = "Current state: Agent1: {} , Agent2: {}".format(
-    #             MOVES[self.state[self.agents[0]]], MOVES[self.state[self.agents[1]]]
-    #         )
-    #     else:
-    #         string = "Game over"
-    #     print(string)
 
+    # def close(self):
+        """
+        Close should release any graphical displays, subprocesses, network connections
+        or any other environment data which should not be kept around after the
+        user is no longer using the environment.
+        """
+        ### TODO: @Owen
+        pass
+
+    # NOTE: I think we just call 
     # def observe(self, agent):
     #     """
     #     Observe should return the observation of the specified agent. This function
@@ -139,14 +137,7 @@ class raw_env(AECEnv):
     #     # observation of one agent is the previous state of the other
     #     return np.array(self.observations[agent])
 
-    # def close(self):
-    #     """
-    #     Close should release any graphical displays, subprocesses, network connections
-    #     or any other environment data which should not be kept around after the
-    #     user is no longer using the environment.
-    #     """
-    #     pass
-
+    # NOTE: To get started, I think we should simply provide rewards as when points are realized (eggs laid, card played, end of round goal, Bonus card realized or lost)
     # def reset(self, seed=None, options=None):
     #     """
     #     Reset needs to initialize the following attributes
@@ -176,6 +167,7 @@ class raw_env(AECEnv):
     #     self._agent_selector = agent_selector(self.agents)
     #     self.agent_selection = self._agent_selector.next()
 
+    # NOTE: I think this is the are that is going to interact with the bulk of our code
     # def step(self, action):
     #     """
     #     step(action) takes in an action for the current agent (specified by
