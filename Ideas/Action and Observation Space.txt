@@ -37,7 +37,7 @@ This is very likely a good way to help define spaces in a readable fashion: http
 +
 20 (I suggest we arbitrarily limit # of cards in hand) x # unique bird cards
 +
-5 ints (nums of each type of int).  We might have to be careful with this since it's a diff data type
+5 ints (nums of each type of food).  We might have to be careful with this since it's a diff data type
 +
 one-hot-encoded round number
 +

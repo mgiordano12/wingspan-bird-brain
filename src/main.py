@@ -15,8 +15,9 @@ for i in range(NUM_PLAYERS):
     initial_bonus_cards = bonus_card_deck.draw_cards(n=2)
     players.append(Player(initial_cards, initial_bonus_cards, PLAYER_NAMES[i]))
 
-print(f"Birdfeeder: {birdfeeder}")
+# print(f"Birdfeeder: {birdfeeder}")
 print(f"Deck {deck}")
-print(f"End Goals {end_of_round_goals}")
-print(players[0])
-print(np.unique([card.power_text for card in deck if card.power_category is not None]))
+print(len(deck))
+# print(f"End Goals {end_of_round_goals}")
+# print(players[0])
+# print(np.unique([card.power_text for card in deck if card.power_category is not None]))
