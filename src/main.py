@@ -18,6 +18,7 @@ for i in range(NUM_PLAYERS):
 # print(f"Birdfeeder: {birdfeeder}")
 print(f"Deck {deck}")
 print(len(deck))
+print(len(bonus_card_deck))
 # print(f"End Goals {end_of_round_goals}")
 # print(players[0])
-# print(np.unique([card.power_text for card in deck if card.power_category is not None]))
+# print(len(np.unique([card.power_text for card in deck if card.power_category is not None])))

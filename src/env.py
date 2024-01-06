@@ -92,9 +92,20 @@ class raw_env(AECEnv):
                 "Play Bird" : Discrete(NUMBER_HABITATS*NUMBER_BIRD_CARDS),
                 "Gain Food" : Discrete(len(BIRDFEEDER_FACES)),  # Gain food one at a time
                 "Lay Egg" : Discrete(NUMBER_CARDS_PER_HABITAT*NUMBER_HABITATS), # One egg at a time
-                "Gain Card" : Discrete(NUMBER_BIRD_CARDS + BIRD_TRAY_SIZE) # One card at a time
-                ### TODO: Need to think a while about wht power need to be represented here, and whether they are already "included".  
-                # Do we need to add one to each to "decline" the option?
+                "Gain Card" : Discrete(NUMBER_BIRD_CARDS + 1), # One card at a time, mask those not available, +1 is choose random
+                "Powers" : Discrete(NUMBER_UNIQUE_POWERS + 1),  # Discrete are either or, MultiBinary are a set of "switches that can be flipped independently"
+                                            # This is whether or not to "do" the action, and all other options should be masked at this step
+                                            # Should we model this as 
+                                                # A MultiBinary (each Power has a Yes/NO)
+                                                # Discrete (each of NUMBER_UNIQUE_POWERS) + 1 (A singular "No" option)
+                                            # I've currently modeled as Discrete just because everything else is discrete rn
+                "Food to Discard" : Discrete(NUMBER_FOOD_TYPES),
+                "Egg to Discard" : Discrete(NUMBER_HABITATS*NUMBER_CARDS_PER_HABITAT),
+                "Card to Discard or Tuck" : Discrete(NUMBER_BIRD_CARDS),
+                "Bonus Card" : Discrete(NUMBER_BONUS_CARDS),
+                "Cache or Keep Food" : Discrete(2), # Cache or Keep
+                "Repeat Power" : Discrete(NUMBER_UNIQUE_POWERS), # Which power to repeat
+                "Move Bird" : Discrete(NUMBER_HABITATS-1) # If we skipped this power we'll stay in same habitat, hence - 1
             }
         )
         return action_space
