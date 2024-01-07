@@ -86,6 +86,7 @@ class raw_env(AECEnv):
     def action_space(self, agent):
         # gymnasium spaces are defined and documented here: https://gymnasium.farama.org/api/spaces/
         # TODO: Will need to flatten this when using.  See https://gymnasium.farama.org/api/wrappers/observation_wrappers/#gymnasium.wrappers.FlattenObservation
+        # TODO: Need to update for starting decisions
         action_space = gymnasium.spaces.Dict(
             {
                 # Still not 100% sure MultiDiscrete or MultiBinary aren't better representations: https://gymnasium.farama.org/api/spaces/
@@ -103,7 +104,7 @@ class raw_env(AECEnv):
                                             # Two of any food for one of another. There are (NUMBER_FOOD_TYPES-1)**2 combos of two food (that aren't the food I need) 
                                             # to trade for the food I need.  Multiply by NUMBER_FOOD_TYPES (food I need)
                 "Egg to Discard" : Discrete(NUMBER_HABITATS*NUMBER_CARDS_PER_HABITAT),
-                "Card to Discard or Tuck" : Discrete(NUMBER_BIRD_CARDS),
+                "Card to Discard or Tuck" : Discrete(NUMBER_BIRD_CARDS), # Can encapsulate these in one since they are functionally equivilant to us (which card disappears)
                 "Bonus Card" : Discrete(NUMBER_BONUS_CARDS),
                 "Cache or Keep Food" : Discrete(2), # Cache or Keep
                 "Repeat Power" : Discrete(NUMBER_UNIQUE_POWERS), # Which power to repeat
