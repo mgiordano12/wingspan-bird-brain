@@ -93,13 +93,15 @@ class raw_env(AECEnv):
                 "Gain Food" : Discrete(len(BIRDFEEDER_FACES)),  # Gain food one at a time
                 "Lay Egg" : Discrete(NUMBER_CARDS_PER_HABITAT*NUMBER_HABITATS), # One egg at a time
                 "Gain Card" : Discrete(NUMBER_BIRD_CARDS + 1), # One card at a time, mask those not available, +1 is choose random
-                "Powers" : Discrete(NUMBER_UNIQUE_POWERS + 1),  # Discrete are either or, MultiBinary are a set of "switches that can be flipped independently"
+                "Powers" : Discrete(NUMBER_UNIQUE_POWERS + 1 + 3),  # Discrete are either or, MultiBinary are a set of "switches that can be flipped independently"
                                             # This is whether or not to "do" the action, and all other options should be masked at this step
                                             # Should we model this as 
                                                 # A MultiBinary (each Power has a Yes/NO)
-                                                # Discrete (each of NUMBER_UNIQUE_POWERS) + 1 (A singular "No" option)
+                                                # Discrete (each of NUMBER_UNIQUE_POWERS) + 1 (A singular "No" option) + 3 (board trade options.  Eg. Discard egg for card)
                                             # I've currently modeled as Discrete just because everything else is discrete rn
-                "Food to Discard" : Discrete(NUMBER_FOOD_TYPES),
+                "Food to Discard" : Discrete(NUMBER_FOOD_TYPES + (((NUMBER_FOOD_TYPES-1)**2)*NUMBER_FOOD_TYPES) ), # Area in () represents ability to trade
+                                            # Two of any food for one of another. There are (NUMBER_FOOD_TYPES-1)**2 combos of two food (that aren't the food I need) 
+                                            # to trade for the food I need.  Multiply by NUMBER_FOOD_TYPES (food I need)
                 "Egg to Discard" : Discrete(NUMBER_HABITATS*NUMBER_CARDS_PER_HABITAT),
                 "Card to Discard or Tuck" : Discrete(NUMBER_BIRD_CARDS),
                 "Bonus Card" : Discrete(NUMBER_BONUS_CARDS),
