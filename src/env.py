@@ -68,14 +68,18 @@ class raw_env(AECEnv):
         # TODO: Will need to flatten this when using.  See https://gymnasium.farama.org/api/wrappers/observation_wrappers/#gymnasium.wrappers.FlattenObservation
         obs_space = gymnasium.spaces.Dict(
             {
-                # Still not 100% sure MultiDiscrete or MultiBinary aren't better representations: https://gymnasium.farama.org/api/spaces/
-                "Bird Position" : Discrete(NUMBER_HABITATS*NUMBER_CARDS_PER_HABITAT*NUMBER_BIRD_CARDS),
-                "Goals" : Discrete(NUMBER_END_ROUND_GOALS*NUMBER_END_ROUND_GOAL_PIECES),
-                "Birdfeeder" : Discrete(MAX_NUMBER_DIE_IN_BIRDFEEDER*(len(BIRDFEEDER_FACES)+1)), # + 1 since could be empty 
-                "Cards in Hand" : Discrete(MAX_NUMBER_CARDS_IN_HAND*NUMBER_BIRD_CARDS),
-                "Food in Hand" : Box(low=MIN_FOOD_IN_HAND, high=MAX_PER_FOOD_IN_HAND, shape = (NUMBER_FOOD_TYPES,1), dtype = int),
-                "Round Number" : Box(low=1, high=NUMBER_OF_ROUNDS, dtype = int), #Default shape of 1
-                "Turns Left" : Box(low=0, high=np.max(NUMBER_OF_TURNS), dtype = int) # Default shape of 1
+                "Bird Position" : MultiDiscrete([20,]*NUMBER_BIRD_CARDS), # 0-14 gamemat, 15 agent hand, 16 tray, 17 agent discarded, 18 unknown, 19 tucked
+                # ^^ TODO ^^: add more channels to bird position observation if we want to include other player's boards and hands
+                "Goals" : MultiDiscrete([NUMBER_END_ROUND_GOALS,]*4),
+                "Birdfeeder" : MultiDiscrete([BIRDFEEDER_FACES+1,]*MAX_NUMBER_DIE_IN_BIRDFEEDER), # +1 for die out of feeder
+                "Food in Hand" : Box(low=0, high=2**63-2, shape=(NUMBER_FOOD_TYPES,), dtype=int),
+                "Round Number" : Box(low=1, high=NUMBER_OF_ROUNDS, dtype=int), # Default shape of 1
+                "Turns Left" : Box(low=0, high=np.max(NUMBER_OF_TURNS), dtype=int), # Default shape of 1
+                "Bonus in Hand": MultiDiscrete([3,]*NUMBER_BONUS_CARDS), # 0 agent hand, 1 agent discarded, 2 unknown
+                "Cached Food": Box(low=0, high=2**63-2, shape=[NUM_HABITATS, NUM_CARDS_PER_HABITAT, 1], dtype=int), # number cached food in each spot on the gamemate
+                # ^^ TODO ^^: increase size of last dim to include all other players later
+                # TODO "Tucked cards" - add later if we care about where the card is tucked or how many cards the other players have tucked, Box(low=0, high=NUM_CARDS, shape=[NUM_HABITATS, NUM_CARDS_PER_HABITAT, 1], dtype=int), increase last dim later if we want to include tucked card counts for other players
+                # NOTE, TO THINK ABOUT: do we want to directly represent birdcard attributes here - e.g., nest types, wingspans, food cost for birds???
             }
         )
         return obs_space
