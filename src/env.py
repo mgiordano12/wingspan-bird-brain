@@ -93,26 +93,24 @@ class raw_env(AECEnv):
         # TODO: Need to update for starting decisions
         action_space = gymnasium.spaces.Dict(
             {
-                # Still not 100% sure MultiDiscrete or MultiBinary aren't better representations: https://gymnasium.farama.org/api/spaces/
-                "Play Bird" : Discrete(NUMBER_HABITATS*NUMBER_BIRD_CARDS),
+                "Play Bird" : MultiDiscrete(np.ones([NUMBER_HABITATS, NUMBER_BIRD_CARDS])),
                 "Gain Food" : Discrete(len(BIRDFEEDER_FACES)),  # Gain food one at a time
-                "Lay Egg" : Discrete(NUMBER_CARDS_PER_HABITAT*NUMBER_HABITATS), # One egg at a time
-                "Gain Card" : Discrete(NUMBER_BIRD_CARDS + 1), # One card at a time, mask those not available, +1 is choose random
-                "Powers" : Discrete(NUMBER_UNIQUE_POWERS + 1 + 3),  # Discrete are either or, MultiBinary are a set of "switches that can be flipped independently"
-                                            # This is whether or not to "do" the action, and all other options should be masked at this step
-                                            # Should we model this as 
-                                                # A MultiBinary (each Power has a Yes/NO)
-                                                # Discrete (each of NUMBER_UNIQUE_POWERS) + 1 (A singular "No" option) + 3 (board trade options.  Eg. Discard egg for card)
-                                            # I've currently modeled as Discrete just because everything else is discrete rn
-                "Food to Discard" : Discrete(NUMBER_FOOD_TYPES + (((NUMBER_FOOD_TYPES-1)**2)*NUMBER_FOOD_TYPES) ), # Area in () represents ability to trade
+                # ^^ TODO ^^: Think about this one. Keep as 1 action in dict or break into 5 actions in dict, 1 for each food type
+                "Lay Egg" : MultiDiscrete(np.ones([NUMBER_HABITATS, NUMBER_OF_CARDS_PER_HABITAT])), # One egg at a time
+                "Gain Bird" : Discrete(NUMBER_BIRD_CARDS + 1), # One card at a time, mask those not available, +1 is choose random
+                "Powers" : Discrete(NUMBER_UNIQUE_POWERS + 1),  # This is whether or not to "do" the action, and all other options should be masked at this step
+                "Board Trade": Discrete(4), # 3 for doing the trades on the board, 1 for "NO"
+                "Discard Food" : Discrete(NUMBER_FOOD_TYPES + (((NUMBER_FOOD_TYPES-1)**2)*NUMBER_FOOD_TYPES)), # Area in () represents ability to trade
                                             # Two of any food for one of another. There are (NUMBER_FOOD_TYPES-1)**2 combos of two food (that aren't the food I need) 
                                             # to trade for the food I need.  Multiply by NUMBER_FOOD_TYPES (food I need)
-                "Egg to Discard" : Discrete(NUMBER_HABITATS*NUMBER_CARDS_PER_HABITAT),
-                "Card to Discard or Tuck" : Discrete(NUMBER_BIRD_CARDS), # Can encapsulate these in one since they are functionally equivilant to us (which card disappears)
+                "Discard Egg" : MultiDiscrete(np.ones([NUMBER_HABITATS, NUMBER_OF_CARDS_PER_HABITAT])),
+                "Discard or Tuck Bird From Hand" : Discrete(NUMBER_BIRD_CARDS), # Can encapsulate these in one since they are functionally equivilant to us (which card disappears)
                 "Bonus Card" : Discrete(NUMBER_BONUS_CARDS),
                 "Cache or Keep Food" : Discrete(2), # Cache or Keep
+                # ^^ TODO ^^: Think about this one. Include keep food in Gain Food above and make cache separate? Break into separate actions for each food type?
                 "Repeat Power" : Discrete(NUMBER_UNIQUE_POWERS), # Which power to repeat
-                "Move Bird" : Discrete(NUMBER_HABITATS-1) # If we skipped this power we'll stay in same habitat, hence - 1
+                "Move Bird" : Discrete(NUMBER_HABITATS), # TODO: Use masking to disable the habitat the bird is already in
+                "Reroll Birdfeeder": Discrete(2),
             }
         )
         return action_space
