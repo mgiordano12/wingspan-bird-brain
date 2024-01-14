@@ -194,6 +194,10 @@ class raw_env(AECEnv):
         # self._agent_selector = agent_selector(self.agents)
         # self.agent_selection = self._agent_selector.next()
 
+    # for round in num_rounds
+        # for turn in num_turns
+            # play_turn
+
     # NOTE: I think this is the are that is going to interact with the bulk of our code
     def step(self, action):
         """
@@ -217,7 +221,8 @@ class raw_env(AECEnv):
             self._was_dead_step(action)
             return
 
-        agent = self.agent_selection
+        # TODO: This is the mechanism they use to move turns.  Need to update fro wingspan
+        # agent = self.agent_selection
 
         # the agent which stepped last had its _cumulative_rewards accounted for
         # (because it was returned by last()), so the _cumulative_rewards for this

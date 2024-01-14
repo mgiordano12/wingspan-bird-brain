@@ -16,5 +16,6 @@ env.render()
 #         action = env.action_space(agent).sample()
 
 #     env.step(action)
+# env.last()
 
 env.close()
