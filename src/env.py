@@ -11,6 +11,8 @@ from gymnasium.spaces import Box, Dict, Discrete, MultiBinary, MultiDiscrete
 from pettingzoo import AECEnv
 from pettingzoo.utils import agent_selector, wrappers
 
+from Game import Game
+
 ### We are going to stick with one agent for now
 NUM_AGENTS = 1
 
@@ -43,7 +45,7 @@ class raw_env(AECEnv):
 
     metadata = {"render_modes": ["human"], "name": "rps_v2"}
 
-    def __init__(self, render_mode=None):
+    def __init__(self, render_mode=None, num_players=1, player_names=['Joe']):
         """
         The init method takes in environment arguments and
          should define the following attributes:
@@ -58,6 +60,8 @@ class raw_env(AECEnv):
         )
 
         self.render_mode = render_mode
+
+        self.game = Game(num_players=num_players,player_names=player_names)
 
     # Observation space should be defined here.
     # lru_cache allows observation and action spaces to be memoized, reducing clock cycles required to get each agent's space.
@@ -76,7 +80,7 @@ class raw_env(AECEnv):
                 "Round Number" : Box(low=1, high=NUMBER_OF_ROUNDS, dtype=int), # Default shape of 1
                 "Turns Left" : Box(low=0, high=np.max(NUMBER_OF_TURNS), dtype=int), # Default shape of 1
                 "Bonus in Hand": MultiDiscrete([3,]*NUMBER_BONUS_CARDS), # 0 agent hand, 1 agent discarded, 2 unknown
-                "Cached Food": Box(low=0, high=2**63-2, shape=[NUM_HABITATS, NUM_CARDS_PER_HABITAT, 1], dtype=int), # number cached food in each spot on the gamemate
+                "Cached Food": Box(low=0, high=2**63-2, shape=[NUMBER_HABITATS, NUMBER_CARDS_PER_HABITAT, 1], dtype=int), # number cached food in each spot on the gamemate
                 # ^^ TODO ^^: increase size of last dim to include all other players later
                 # TODO "Tucked cards" - add later if we care about where the card is tucked or how many cards the other players have tucked, Box(low=0, high=NUM_CARDS, shape=[NUM_HABITATS, NUM_CARDS_PER_HABITAT, 1], dtype=int), increase last dim later if we want to include tucked card counts for other players
                 # NOTE, TO THINK ABOUT: do we want to directly represent birdcard attributes here - e.g., nest types, wingspans, food cost for birds???
@@ -96,14 +100,14 @@ class raw_env(AECEnv):
                 "Play Bird" : MultiDiscrete(np.ones([NUMBER_HABITATS, NUMBER_BIRD_CARDS])),
                 "Gain Food" : Discrete(len(BIRDFEEDER_FACES)),  # Gain food one at a time
                 # ^^ TODO ^^: Think about this one. Keep as 1 action in dict or break into 5 actions in dict, 1 for each food type
-                "Lay Egg" : MultiDiscrete(np.ones([NUMBER_HABITATS, NUMBER_OF_CARDS_PER_HABITAT])), # One egg at a time
+                "Lay Egg" : MultiDiscrete(np.ones([NUMBER_HABITATS, NUMBER_CARDS_PER_HABITAT])), # One egg at a time
                 "Gain Bird" : Discrete(NUMBER_BIRD_CARDS + 1), # One card at a time, mask those not available, +1 is choose random
                 "Powers" : Discrete(NUMBER_UNIQUE_POWERS + 1),  # This is whether or not to "do" the action, and all other options should be masked at this step
                 "Board Trade": Discrete(4), # 3 for doing the trades on the board, 1 for "NO"
                 "Discard Food" : Discrete(NUMBER_FOOD_TYPES + (((NUMBER_FOOD_TYPES-1)**2)*NUMBER_FOOD_TYPES)), # Area in () represents ability to trade
                                             # Two of any food for one of another. There are (NUMBER_FOOD_TYPES-1)**2 combos of two food (that aren't the food I need) 
                                             # to trade for the food I need.  Multiply by NUMBER_FOOD_TYPES (food I need)
-                "Discard Egg" : MultiDiscrete(np.ones([NUMBER_HABITATS, NUMBER_OF_CARDS_PER_HABITAT])),
+                "Discard Egg" : MultiDiscrete(np.ones([NUMBER_HABITATS, NUMBER_CARDS_PER_HABITAT])),
                 "Discard or Tuck Bird From Hand" : Discrete(NUMBER_BIRD_CARDS), # Can encapsulate these in one since they are functionally equivilant to us (which card disappears)
                 "Bonus Card" : Discrete(NUMBER_BONUS_CARDS),
                 "Cache or Keep Food" : Discrete(2), # Cache or Keep
@@ -120,10 +124,11 @@ class raw_env(AECEnv):
         Renders the environment. In human mode, it can print to terminal, open
         up a graphical window, or open up some other display that a human can see and understand.
         """
-        ### TODO: @Owen- connect up with your GUI
+        ### TODO: @Owen- connect up with your GUI.  Right now I have it just printing things
+        print(self.game)
 
 
-    # def close(self):
+    def close(self):
         """
         Close should release any graphical displays, subprocesses, network connections
         or any other environment data which should not be kept around after the
@@ -133,106 +138,108 @@ class raw_env(AECEnv):
         pass
 
     # NOTE: I think we just call 
-    # def observe(self, agent):
-    #     """
-    #     Observe should return the observation of the specified agent. This function
-    #     should return a sane observation (though not necessarily the most up to date possible)
-    #     at any time after reset() is called.
-    #     """
-    #     # observation of one agent is the previous state of the other
-    #     return np.array(self.observations[agent])
+    def observe(self, agent):
+        """
+        Observe should return the observation of the specified agent. This function
+        should return a sane observation (though not necessarily the most up to date possible)
+        at any time after reset() is called.
+        """
+        # observation of one agent is the previous state of the other
+        return np.array(self.observations[agent])
 
     # NOTE: To get started, I think we should simply provide rewards as when points are realized (eggs laid, card played, end of round goal, Bonus card realized or lost)
-    # def reset(self, seed=None, options=None):
-    #     """
-    #     Reset needs to initialize the following attributes
-    #     - agents
-    #     - rewards
-    #     - _cumulative_rewards
-    #     - terminations
-    #     - truncations
-    #     - infos
-    #     - agent_selection
-    #     And must set up the environment so that render(), step(), and observe()
-    #     can be called without issues.
-    #     Here it sets up the state dictionary which is used by step() and the observations dictionary which is used by step() and observe()
-    #     """
-    #     self.agents = self.possible_agents[:]
-    #     self.rewards = {agent: 0 for agent in self.agents}
-    #     self._cumulative_rewards = {agent: 0 for agent in self.agents}
-    #     self.terminations = {agent: False for agent in self.agents}
-    #     self.truncations = {agent: False for agent in self.agents}
-    #     self.infos = {agent: {} for agent in self.agents}
-    #     self.state = {agent: NONE for agent in self.agents}
-    #     self.observations = {agent: NONE for agent in self.agents}
-    #     self.num_moves = 0
-    #     """
-    #     Our agent_selector utility allows easy cyclic stepping through the agents list.
-    #     """
-    #     self._agent_selector = agent_selector(self.agents)
-    #     self.agent_selection = self._agent_selector.next()
+    def reset(self, seed=None, options=None):
+        """
+        Reset needs to initialize the following attributes
+        - agents
+        - rewards
+        - _cumulative_rewards
+        - terminations
+        - truncations
+        - infos
+        - agent_selection
+        And must set up the environment so that render(), step(), and observe()
+        can be called without issues.
+        Here it sets up the state dictionary which is used by step() and the observations dictionary which is used by step() and observe()
+        """
+        self.agents = self.possible_agents[:]
+        self.rewards = {agent: 0 for agent in self.agents}
+        self._cumulative_rewards = {agent: 0 for agent in self.agents}
+        self.terminations = {agent: False for agent in self.agents}
+        self.truncations = {agent: False for agent in self.agents}
+        self.infos = {agent: {} for agent in self.agents}
+        self.state = {agent: None for agent in self.agents}
+        self.observations = {agent: None for agent in self.agents}
+        self.num_moves = 0
+        """
+        Our agent_selector utility allows easy cyclic stepping through the agents list.
+        """
+        self._agent_selector = agent_selector(self.agents)
+        self.agent_selection = self._agent_selector.next()
 
     # NOTE: I think this is the are that is going to interact with the bulk of our code
-    # def step(self, action):
-    #     """
-    #     step(action) takes in an action for the current agent (specified by
-    #     agent_selection) and needs to update
-    #     - rewards
-    #     - _cumulative_rewards (accumulating the rewards)
-    #     - terminations
-    #     - truncations
-    #     - infos
-    #     - agent_selection (to the next agent)
-    #     And any internal state used by observe() or render()
-    #     """
-    #     if (
-    #         self.terminations[self.agent_selection]
-    #         or self.truncations[self.agent_selection]
-    #     ):
-    #         # handles stepping an agent which is already dead
-    #         # accepts a None action for the one agent, and moves the agent_selection to
-    #         # the next dead agent,  or if there are no more dead agents, to the next live agent
-    #         self._was_dead_step(action)
-    #         return
+    def step(self, action):
+        """
+        step(action) takes in an action for the current agent (specified by
+        agent_selection) and needs to update
+        - rewards
+        - _cumulative_rewards (accumulating the rewards)
+        - terminations
+        - truncations
+        - infos
+        - agent_selection (to the next agent)
+        And any internal state used by observe() or render()
+        """
+        if (
+            self.terminations[self.agent_selection]
+            or self.truncations[self.agent_selection]
+        ):
+            # handles stepping an agent which is already dead
+            # accepts a None action for the one agent, and moves the agent_selection to
+            # the next dead agent,  or if there are no more dead agents, to the next live agent
+            self._was_dead_step(action)
+            return
 
-    #     agent = self.agent_selection
+        agent = self.agent_selection
 
-    #     # the agent which stepped last had its _cumulative_rewards accounted for
-    #     # (because it was returned by last()), so the _cumulative_rewards for this
-    #     # agent should start again at 0
-    #     self._cumulative_rewards[agent] = 0
+        # the agent which stepped last had its _cumulative_rewards accounted for
+        # (because it was returned by last()), so the _cumulative_rewards for this
+        # agent should start again at 0
+        self._cumulative_rewards[agent] = 0
 
-    #     # stores action of current agent
-    #     self.state[self.agent_selection] = action
+        # stores action of current agent
+        self.state[self.agent_selection] = action
 
-    #     # collect reward if it is the last agent to act
-    #     if self._agent_selector.is_last():
-    #         # rewards for all agents are placed in the .rewards dictionary
-    #         self.rewards[self.agents[0]], self.rewards[self.agents[1]] = REWARD_MAP[
-    #             (self.state[self.agents[0]], self.state[self.agents[1]])
-    #         ]
+        ## TODO: Blocking out any reards for now until we get gameplay up and running
+        # collect reward if it is the last agent to act
+        # if self._agent_selector.is_last():
+        #     # rewards for all agents are placed in the .rewards dictionary
+        #     self.rewards[self.agents[0]], self.rewards[self.agents[1]] = REWARD_MAP[
+        #         (self.state[self.agents[0]], self.state[self.agents[1]])
+        #     ]
 
-    #         self.num_moves += 1
-    #         # The truncations dictionary must be updated for all players.
-    #         self.truncations = {
-    #             agent: self.num_moves >= NUM_ITERS for agent in self.agents
-    #         }
+        #     self.num_moves += 1
+        #     # The truncations dictionary must be updated for all players.
+        #     self.truncations = {
+        #         agent: self.num_moves >= NUM_ITERS for agent in self.agents
+        #     }
 
-    #         # observe the current state
-    #         for i in self.agents:
-    #             self.observations[i] = self.state[
-    #                 self.agents[1 - self.agent_name_mapping[i]]
-    #             ]
-    #     else:
-    #         # necessary so that observe() returns a reasonable observation at all times.
-    #         self.state[self.agents[1 - self.agent_name_mapping[agent]]] = NONE
-    #         # no rewards are allocated until both players give an action
-    #         self._clear_rewards()
+        #     # observe the current state
+        #     for i in self.agents:
+        #         self.observations[i] = self.state[
+        #             self.agents[1 - self.agent_name_mapping[i]]
+        #         ]
+        # else:
+        #     # necessary so that observe() returns a reasonable observation at all times.
+        #     self.state[self.agents[1 - self.agent_name_mapping[agent]]] = NONE
+        #     # no rewards are allocated until both players give an action
+        #     self._clear_rewards()
 
-    #     # selects the next agent.
-    #     self.agent_selection = self._agent_selector.next()
-    #     # Adds .rewards to ._cumulative_rewards
-    #     self._accumulate_rewards()
+        # selects the next agent.
+        self.agent_selection = self._agent_selector.next()
+    
+        # Adds .rewards to ._cumulative_rewards
+        # self._accumulate_rewards()
 
-    #     if self.render_mode == "human":
-    #         self.render()
+        if self.render_mode == "human":
+            self.render()

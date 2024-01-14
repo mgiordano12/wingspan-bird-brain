@@ -22,6 +22,9 @@ class Player:
 
     def getGameMat(self):
         return self.gamemat
+    
+    def getName(self):
+        return self.name
 
     def _assignStartingMaterials(self, birdcards, bonuscards):
         # This makes it modular but is kinda annoying since you'll have to have to choose 
