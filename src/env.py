@@ -63,6 +63,10 @@ class raw_env(AECEnv):
 
         self.game = Game(num_players=num_players,player_names=player_names)
 
+        self.round_number = 1
+        self.turns_left = [NUMBER_OF_TURNS[self.round_number-1] for q in range(num_players)]
+        # TODO: For multiple players, randomize order
+
     # Observation space should be defined here.
     # lru_cache allows observation and action spaces to be memoized, reducing clock cycles required to get each agent's space.
     # If your spaces change over time, remove this line (disable caching).
@@ -162,20 +166,33 @@ class raw_env(AECEnv):
         can be called without issues.
         Here it sets up the state dictionary which is used by step() and the observations dictionary which is used by step() and observe()
         """
+
+        # I think we want to point this at our initialized players?
         self.agents = self.possible_agents[:]
+
+        # TODO
         self.rewards = {agent: 0 for agent in self.agents}
         self._cumulative_rewards = {agent: 0 for agent in self.agents}
+
+        # I think termination is supposed to represent a player having no more turns.  Can we use this for end of rounds?
         self.terminations = {agent: False for agent in self.agents}
+        # TODO: What is truncation supposed to represent
         self.truncations = {agent: False for agent in self.agents}
+
+        # TODO: Not sure what these are used for
         self.infos = {agent: {} for agent in self.agents}
         self.state = {agent: None for agent in self.agents}
         self.observations = {agent: None for agent in self.agents}
-        self.num_moves = 0
+
+
+        
+
         """
         Our agent_selector utility allows easy cyclic stepping through the agents list.
         """
-        self._agent_selector = agent_selector(self.agents)
-        self.agent_selection = self._agent_selector.next()
+        # NOTE: I'm not sure we'll be able to use this since sometimes order changes :(
+        # self._agent_selector = agent_selector(self.agents)
+        # self.agent_selection = self._agent_selector.next()
 
     # NOTE: I think this is the are that is going to interact with the bulk of our code
     def step(self, action):
@@ -205,7 +222,7 @@ class raw_env(AECEnv):
         # the agent which stepped last had its _cumulative_rewards accounted for
         # (because it was returned by last()), so the _cumulative_rewards for this
         # agent should start again at 0
-        self._cumulative_rewards[agent] = 0
+        # self._cumulative_rewards[agent] = 0
 
         # stores action of current agent
         self.state[self.agent_selection] = action
@@ -236,7 +253,8 @@ class raw_env(AECEnv):
         #     self._clear_rewards()
 
         # selects the next agent.
-        self.agent_selection = self._agent_selector.next()
+        # TODO: We are going to have to make out own "agent selector" which determines the next steps
+        # self.agent_selection = self._agent_selector.next()
     
         # Adds .rewards to ._cumulative_rewards
         # self._accumulate_rewards()

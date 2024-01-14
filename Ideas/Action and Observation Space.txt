@@ -15,7 +15,7 @@ This is very likely a good way to help define spaces in a readable fashion: http
 Maybe we can define decisions in a more piecemeal fashion.  Every power is a separate step, every food choice is a separate step, etc.  Let the game tell you what is legal (via the action 
 mask) and the network will learn?
 
-play_bird = 15 (places available) * #unique bird cards (you could also do the 20 spots in your hand... but I feel like this will learn faster)
+play_bird = 3 (each habitat) * #unique bird cards (you could also do the 20 spots in your hand... but I feel like this will learn faster)
 
 gain_food = 5 one-hot-encoded die.  Each gain food choice is a new step.  The network should learn through the observation space that it gains more food per turn if more stuff is in the forest...
 
