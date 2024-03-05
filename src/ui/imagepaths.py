@@ -13,6 +13,7 @@ nest_paths = {
     'Ground': './ui/images/nest_ground.png', 
     'Platform': './ui/images/nest_platform.png',
     'Wild': './ui/images/nest_star.png',
+    'None': './ui/images/food_no-food.png'
 }
 eorg_paths = {
     'Bird in Forest': './ui/images/eorg_bird_in_forest.png', 
