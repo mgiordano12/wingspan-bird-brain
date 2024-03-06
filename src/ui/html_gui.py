@@ -133,14 +133,14 @@ def createFaceUpBirdCardDiv(birddeck):
     return topDiv
 
 #=======================================================================================================================
-def createGameInfoDiv(round, turnsRemaining, eorgMat):
+def createGameInfoDiv(round, turn, eorgMat):
     assert type(round) is int
-    assert type(turnsRemaining) is int
+    assert type(turn) is int
     assert type(eorgMat) is EndOfRoundGoalMat
 
     topDiv = parseString(f'''
         <div class="game-info" style="font-family: sans-serif;">
-            <b>Round: {round}, Turns remaining: {turnsRemaining}</b>
+            <b>Round: {round}, Turn: {turn}</b>
         </div>
     ''').documentElement
 
@@ -189,12 +189,12 @@ def createBonusInHandDiv(player):
     return topDiv
 
 #=======================================================================================================================
-def createHTML(round, turnsRemaining, eorgMat, player, birdfeeder, birddeck):
+def createHTML(round, turn, eorgMat, player, birdfeeder, birddeck):
     impl = getDOMImplementation()
     doc = impl.createDocument(None, 'gui', None)
     html = doc.documentElement
 
-    html.appendChild(createGameInfoDiv(round, turnsRemaining, eorgMat)) # game info
+    html.appendChild(createGameInfoDiv(round, turn, eorgMat)) # game info
 
     html.appendChild(parseString('<div style="font-family: sans-serif; font-size: 28px"> <b><u><i>Habitats</i></u></b> </div>').documentElement)
 
