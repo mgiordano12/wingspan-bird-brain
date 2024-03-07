@@ -31,6 +31,7 @@ RUN /app/venv/bin/pip install -r /app/requirements.txt
 ENV PATH="/app/venv/bin:$PATH"
 
 RUN apt-get install -y libglib2.0-0 libsm6 libxrender1 libxext6 ffmpeg libgl1 libegl1 libxcb-cursor0
+RUN apt-get update && apt-get install -y --reinstall qt6-base-dev
 
 # Default command to run
 CMD ["/app/venv/bin/python3", "/app/src/ui/app.py"]
