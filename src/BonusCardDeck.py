@@ -4,15 +4,23 @@ import random
 
 class BonusCardDeck:
     #===================================================================================================================
-    def __init__(self):
+    def __init__(self,seed=0):
+        if seed != 0:
+            random.seed(seed)
         self.deck = load_bonuses()
         self.discarded = set()
 
     #===================================================================================================================
-    def draw_card(self):
-        card = random.sample(self.deck, 1)[0] # draw card
-        self.deck.remove(card) # remove card from deck
-        return card
+    def draw_cards(self, n = 1):
+        cards = []
+        for i in range(n):
+            card = random.sample(self.deck, 1)[0] # draw card
+            cards.append(card)
+            self.deck.remove(card) # remove card from deck
+        if n == 1:
+            return cards[0]
+        else:
+            return cards
     
     #===================================================================================================================
     def discard(self, card):
@@ -21,3 +29,6 @@ class BonusCardDeck:
         elif card in self.discarded:
             raise Exception(f'{card} has already been discarded.')
         self.discarded.add(card)
+
+    def __len__(self):
+        return len(self.deck)

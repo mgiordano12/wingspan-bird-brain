@@ -1,6 +1,9 @@
+from Power import Power
+from Gameplay_Constants import *
+
 class BirdCard:
 
-    #===================================================================================================================
+    #===========================================================================
     def __init__(
             self, common_name, scientific_name, expansion, color, power_category, power_text, predator, flocking, 
             bonus_card, victory_points, nest_type, egg_capacity, wingspan, forest, grassland, wetland, invertebrate, 
@@ -24,6 +27,8 @@ class BirdCard:
         # Power
         self.power_category = power_category
         self.power_text = power_text
+        from PowerDict import bird_power_dict # This needs to be imported here to avoid circular module dependencies
+        self.power = bird_power_dict[self.power_text]
         self.predator = predator # predator power (om nom nom)
         self.flocking = flocking # flocking power (tuck other cards)
         self.bonus_card = bonus_card # bonus card power (draw more bonus cards)
@@ -81,10 +86,39 @@ class BirdCard:
         self.additional_rulings = additional_rulings
 
         # For cards in play
-        self.tuckedcards = 0
+        self.ntuckedcards = 0
+        self.tuckedcards = list()
         self.cachedfood = 0
         self.laideggs = 0
 
-    #===================================================================================================================
+    #===========================================================================
+    def layegg(self, n=1):
+        if self.laideggs + n > self.egg_capacity:
+            raise ValueError(f'Cannot lay another egg on this bird. Already has {self.laideggs} out of {self.egg_capacity} eggs.')
+        self.laideggs += n
+
+    #===========================================================================
+    def removeegg(self, n=1):
+        if self.laideggs < n:
+            raise ValueError(f'Cannot remove an egg from this bird. Only has {self.laideggs} eggs on it.')
+        self.laideggs -= n
+
+    #===========================================================================
+    def cachefood(self, n=1):
+        self.cachedfood += n
+
+    #===========================================================================
+    def tuckcard(self, card):
+        if not isinstance(card, BirdCard):
+            raise Exception('`card` must be a BirdCard.')
+        self.ntuckedcards += 1
+        self.tuckedcards.append(card)
+
+    #===========================================================================
+    def performpower(self):
+        self.power.performpower() # TODO: How do we specify what args we need to pass in?  Or is it unavoidable we have to do *args, **kwargs
+
+    #===========================================================================
     def __repr__(self):
-        return f"BirdCard: {self.common_name}"
+        return f"{self.common_name}"
+    # include , Eggs: {self.laideggs}/{self.egg_capacity}, Nest: {self.nest_type}, Power: {self.victory_points}?

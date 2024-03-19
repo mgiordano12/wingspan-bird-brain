@@ -1,0 +1,47 @@
+[Make your own custom environment tutorial](https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/)
+
+- Wingspan environment (inherits from [OpenAI Gymnasium Environment](https://gymnasium.farama.org/api/env/))
+	- action_space
+		- Dependent on turn state
+	- observation_space
+		- All of Birdfeeder
+		- Bird card deck faceup cards (not facedown)
+		- All of Player
+		- Turn state
+		- Round
+		- End of round goals
+		- Opponent: played cards, eggs, cached food, tucked cards, number of bird cards in hand, number of bonus cards in hand, food in hand
+			- ??? Do we allow the agent to observe the cards that the opponent has picked up? In theory a human could keep track of this. Although you don't know if they've been discarded 
+	- Turn state - current state of turn, determines possible actions
+	- Round
+	- Birdfeeder
+		- Die in feeder
+		- Die out of feeder
+	- Bird card deck
+		- Faceup cards
+		- Facedown cards
+	- Bonus card deck
+	- Player (the agent)
+		- Board
+			- Habitats
+			- Played card
+			- Eggs
+			- Cached food
+			- Tucked cards
+		- Hand
+			- Bird cards
+			- Bonus cards
+			- Food
+	- Opponent(s)
+		- Board
+			- Habitats
+			- Played cards
+			- Eggs
+			- Cached food
+			- Tucked cards
+		- Hand
+			- Bird cards
+			- Bonus cards
+			- Food
+	- End of round goals
+	- Render function to display current environment - PyQt GUI that Owen and Isabel are working on

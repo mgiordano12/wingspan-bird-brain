@@ -1,0 +1,25 @@
+<mxfile host="app.diagrams.net" modified="2024-01-07T15:53:25.064Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" etag="LigCLexDFfTw9Ej217XX" version="22.1.17" type="device">
+  <diagram name="Page-1" id="z1NcQJIwQsV-7AD_wY6L">
+    <mxGraphModel dx="1050" dy="530" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="z3DEqq307aL3IMsRYudp-1" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;Start&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="340" y="60" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="z3DEqq307aL3IMsRYudp-3" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;Play Bird&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="20" y="150" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="z3DEqq307aL3IMsRYudp-4" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;Gain Food&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="220" y="150" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="z3DEqq307aL3IMsRYudp-5" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;Lay Eggs&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="460" y="150" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="z3DEqq307aL3IMsRYudp-6" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;Draw Card&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="660" y="150" width="120" height="60" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

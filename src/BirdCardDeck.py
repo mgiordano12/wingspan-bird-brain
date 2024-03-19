@@ -4,7 +4,9 @@ import random
 
 class BirdCardDeck:
     #===================================================================================================================
-    def __init__(self):
+    def __init__(self, expansions = None, seed=0):
+        if seed != 0:
+            random.seed(seed)
         self.facedown_cards = load_birdcards() # load the deck of all cards
         self.discarded = set() # no cards have been discarded yet
         self.faceup_cards = [None, None, None] # initialize faceup cards
@@ -27,10 +29,18 @@ class BirdCardDeck:
         return card
 
     #===================================================================================================================
-    def draw_facedown_card(self):
-        card = random.sample(self.facedown_cards, 1)[0]
-        self.facedown_cards.remove(card) # remove the card
-        return card
+    def draw_facedown_cards(self, n = 1):
+        if n > len(self.facedown_cards):
+            raise StopIteration
+        cards = []
+        for i in range(n):
+            card = random.sample(self.facedown_cards, 1)[0]
+            cards.append(card)
+            self.facedown_cards.remove(card) # remove the card
+        if n == 1:
+            return cards[0]
+        else:
+            return cards
     
     #===================================================================================================================
     def discard(self, card):
@@ -39,3 +49,19 @@ class BirdCardDeck:
         elif card in self.discarded:
             raise Exception(f'{card} has already been discarded.')
         self.discarded.add(card)
+
+    #===================================================================================================================
+    # This only displays the bird tray
+    def __repr__(self):
+        return f"{self.faceup_cards}"
+    
+    # Allow for iteration
+    def __iter__(self):
+        return self
+
+    # FIXME: Should draw facedown cards just be implemented here?
+    def __next__(self):
+        return self.draw_facedown_cards()
+    
+    def __len__(self):
+        return len(self.facedown_cards)
