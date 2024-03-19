@@ -16,7 +16,6 @@ class Player:
         self.birdcards = birdcards
         self.bonuscards = bonuscards
         self.food = {'Fish' : 1, 'Rodent' : 1, 'Fruit' : 1, 'Invertebrate' : 1, 'Seed' : 1}
-        self.isCPU = isCPU
         self.gamemat = Gamemat()
         # self._assignStartingMaterials(birdcards,bonuscards)
 
