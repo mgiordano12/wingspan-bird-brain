@@ -29,3 +29,6 @@ class BonusCardDeck:
         elif card in self.discarded:
             raise Exception(f'{card} has already been discarded.')
         self.discarded.add(card)
+
+    def __len__(self):
+        return len(self.deck)

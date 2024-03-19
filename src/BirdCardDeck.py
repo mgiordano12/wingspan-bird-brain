@@ -62,3 +62,6 @@ class BirdCardDeck:
     # FIXME: Should draw facedown cards just be implemented here?
     def __next__(self):
         return self.draw_facedown_cards()
+    
+    def __len__(self):
+        return len(self.facedown_cards)
