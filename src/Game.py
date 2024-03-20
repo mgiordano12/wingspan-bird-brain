@@ -5,7 +5,7 @@ import numpy as np
 
 class Game:
     #===========================================================================
-    def __init__(self,num_players=1,player_names=['Joe']):
+    def __init__(self, num_players=1, player_names=['Joe']):
         #### TODO: Initializing one player now, but will need to extend to multiple players in the future
         assert num_players == len(player_names)
         self.deck, self.bonus_card_deck, self.birdfeeder, self.end_of_round_goals = initialize_resources(seed=6)
