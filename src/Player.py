@@ -93,7 +93,7 @@ class Player:
                     raise Exception(f'{card} is already in the bonus cards in this hand.')
                 self.bonuscards.append(card)
 
-    def editFood(self, food : dict):
+    def editFood(self, food: dict):
         """
         Add food to hand
         :param: Food to be added to this hand. Must be in the form of a dictionary with food : amount
