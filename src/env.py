@@ -52,6 +52,15 @@ class WingspanEnvironment(AECEnv):
             })
             for a in self.agents
         }
+        # # Flatten action_masks
+        # self.observation_spaces = {
+        #     a: gymnasium.spaces.Dict({
+        #         "observation": self.observation_spaces[a]["observation"],
+        #         "action_mask": Discrete(flatten_space(self.observation_spaces[a]["action_mask"]).shape[0]) 
+        #     })
+        #     for a in self.agents
+        # }
+
         self.action_spaces = {
             a: gymnasium.spaces.Dict({
                 "Gain Food" : Discrete(7),
@@ -59,6 +68,9 @@ class WingspanEnvironment(AECEnv):
             })
             for a in self.agents
         }
+        # # Flatten all the action_spaces
+        # self.action_spaces = {a: Discrete(flatten_space(self.action_space(a)).shape[0]) for a in self.agents}
+
         self.action_descriptions = {
             "Gain Food": [
                 "Take Fish", "Take Rodent", "Take Fruit", "Take Invertebrate",
@@ -67,6 +79,9 @@ class WingspanEnvironment(AECEnv):
             ],
             "Reroll Birdfeeder": ["Reroll Birdfeeder",],
         }
+        # # Flatten action_descriptions
+        # self.action_descriptions = np.concatenate(list(self.action_descriptions.values()))
+
     #===================================================================================================================
     # lru_cache allows observation and action spaces to be memoized, reducing clock cycles required to get each agent's space.
     # If your spaces change over time, remove this line (disable caching).
@@ -107,6 +122,11 @@ class WingspanEnvironment(AECEnv):
             ),
             "Reroll Birdfeeder": np.array([self.game.birdfeeder.can_be_rerolled,], dtype="int8")
         }
+        # # Flatten the action_mask
+        # action_mask = np.concatenate(list(action_mask.values()))
+
+        return {"observation": observation, "action_mask": action_mask}
+
     #===================================================================================================================
     def reset(self, seed=None, options=None):
         """
@@ -178,6 +198,34 @@ class WingspanEnvironment(AECEnv):
             self.game.players[self.agent_selection].editFood({food_gained: 1})
         else:
             raise NotImplementedError
+
+        # desc = self.action_descriptions[action]
+        # print(desc)
+        # if desc == "Take Fish":
+        #     self.game.birdfeeder.take("Fish")
+        #     self.game.players[self.agent_selection].editFood({"Fish": 1})
+        # elif desc == "Take Rodent":
+        #     self.game.birdfeeder.take("Rodent")
+        #     self.game.players[self.agent_selection].editFood({"Rodent": 1})
+        # elif desc == "Take Fruit":
+        #     self.game.birdfeeder.take("Fruit")
+        #     self.game.players[self.agent_selection].editFood({"Fruit": 1})
+        # elif desc == "Take Invertebrate":
+        #     self.game.birdfeeder.take("Invertebrate")
+        #     self.game.players[self.agent_selection].editFood({"Invertebrate": 1})
+        # elif desc == "Take Seed":
+        #     self.game.birdfeeder.take("Seed")
+        #     self.game.players[self.agent_selection].editFood({"Seed": 1})
+        # elif desc == "Take Invert+Seed, gain Invertebrate":
+        #     self.game.birdfeeder.take("Invertebrate+Seed")
+        #     self.game.players[self.agent_selection].editFood({"Invertebrate": 1})
+        # elif desc == "Take Invert+Seed, gain Seed":
+        #     self.game.birdfeeder.take("Invertebrate+Seed")
+        #     self.game.players[self.agent_selection].editFood({"Seed": 1})
+        # elif desc == "Reroll Birdfeeder":
+        #     self.game.birdfeeder.roll()
+        # else:
+        #     raise NotImplementedError
 
         # Re-roll birdfeeder if it's empty
         if len(self.game.birdfeeder.food) == 0:
