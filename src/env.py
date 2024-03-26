@@ -10,7 +10,8 @@ import os
 from html_gui import createHTML
 import pickle
 import gymnasium
-from gymnasium.spaces import Discrete, MultiDiscrete, Box
+from gymnasium.spaces import Discrete, MultiDiscrete, Box, MultiBinary
+from gymnasium.spaces.utils import flatten_space
 import numpy as np
 
 class WingspanEnvironment(AECEnv):
@@ -32,11 +33,80 @@ class WingspanEnvironment(AECEnv):
         """
         if render_mode not in self.metadata["render_modes"]:
             raise ValueError(f"`render_mode` must be in {self.metadata['render_modes']}")
-        self.possible_agents = ["bird-brain",]
+        self.agents = ["birdbrain_0",]
+        self.possible_agents = self.agents[:]
         self.render_mode = render_mode
         self.log = log
-        self.reset()
 
+        self.observation_spaces = {
+            a: gymnasium.spaces.Dict({
+                "observation": gymnasium.spaces.Dict({
+                    # 0=Fish, 1=Rodent, 2=Fruit, 3=Invertebrate, 4=Seed, 5=Invertebrate+seed, 6=dieOutOfFeeder
+                    # +1 for die out of feeder
+                    "Birdfeeder" : MultiDiscrete([len(BIRDFEEDER_FACES)+1,]*MAX_NUMBER_DIE_IN_BIRDFEEDER),
+                }),
+                "action_mask": gymnasium.spaces.Dict({
+                    "Gain Food": Box(low=0, high=1, shape=(7,), dtype="int8"),
+                    "Reroll Birdfeeder": Box(low=0, high=1, shape=(1,), dtype="int8"),
+                })
+            })
+            for a in self.agents
+        }
+        self.action_spaces = {
+            a: gymnasium.spaces.Dict({
+                "Gain Food" : Discrete(7),
+                "Reroll Birdfeeder": MultiBinary(1),
+            })
+            for a in self.agents
+        }
+        self.action_descriptions = {
+            "Gain Food": [
+                "Take Fish", "Take Rodent", "Take Fruit", "Take Invertebrate",
+                "Take Seed", "Take Invert+Seed, gain Invertebrate", 
+                "Take Invert+Seed, gain Seed",
+            ],
+            "Reroll Birdfeeder": ["Reroll Birdfeeder",],
+        }
+    #===================================================================================================================
+    # lru_cache allows observation and action spaces to be memoized, reducing clock cycles required to get each agent's space.
+    # If your spaces change over time, remove this line (disable caching).
+    # @functools.lru_cache(maxsize=None)
+    def observation_space(self, agent):
+        return self.observation_spaces[agent]
+
+    #===================================================================================================================
+    # If your spaces change over time, remove this line (disable caching).
+    # @functools.lru_cache(maxsize=None)
+    def action_space(self, agent):
+        return self.action_spaces[agent]
+    
+    #===================================================================================================================
+    def observe(self, agent):
+        """
+        Should return the observations in action mask for the agent
+        """
+        observation = {
+            "Birdfeeder": [
+                np.argwhere(np.array(BIRDFEEDER_FACES)==self.game.birdfeeder.food[i])[0][0] if i < len(self.game.birdfeeder.food) else 6
+                for i in range(MAX_NUMBER_DIE_IN_BIRDFEEDER)
+            ]
+        }
+
+        action_mask = {
+            "Gain Food": np.array(
+                [
+                    1 if "Fish" in self.game.birdfeeder.food else 0,
+                    1 if "Rodent" in self.game.birdfeeder.food else 0,
+                    1 if "Fruit" in self.game.birdfeeder.food else 0,
+                    1 if "Invertebrate" in self.game.birdfeeder.food else 0,
+                    1 if "Seed" in self.game.birdfeeder.food else 0,
+                    1 if "Invertebrate+Seed" in self.game.birdfeeder.food else 0, # gain invert
+                    1 if "Invertebrate+Seed" in self.game.birdfeeder.food else 0, # gain seed
+                ], 
+                dtype="int8"
+            ),
+            "Reroll Birdfeeder": np.array([self.game.birdfeeder.can_be_rerolled,], dtype="int8")
+        }
     #===================================================================================================================
     def reset(self, seed=None, options=None):
         """
@@ -54,7 +124,7 @@ class WingspanEnvironment(AECEnv):
         observations dictionary which is used by step() and observe()
         """
         # Reset parts of the PettingZoo env
-        self.agents = copy(self.possible_agents)
+        self.agents = self.possible_agents[:]
         self.rewards = {a: 0 for a in self.agents}
         self._cumulative_rewards = {a: 0 for a in self.agents}
         self.terminations = {a: False for a in self.agents}
@@ -63,36 +133,19 @@ class WingspanEnvironment(AECEnv):
         self.action_counts = {a: 0 for a in self.agents}
         self.agent_selection = self.agents[0]
 
-        self.observation_spaces = {
-            a: gymnasium.spaces.Dict({
-                "observation": gymnasium.spaces.Dict({
-                    "Birdfeeder" : MultiDiscrete([len(BIRDFEEDER_FACES)+1,]*MAX_NUMBER_DIE_IN_BIRDFEEDER), # +1 for die out of feeder
-                }),
-                "action_mask": gymnasium.spaces.Dict({
-                    "Gain Food": Box(low=0, high=1, shape=(len(FOOD_TYPES),), dtype="int8")
-                })
-            })
-            for a in self.agents
-        }
-
-        self.action_spaces = {
-            a: gymnasium.spaces.Dict({
-                "Gain Food" : Discrete(len(FOOD_TYPES)), # Gain food one at a time
-            })
-            for a in self.agents
-        }
-
         # Reset game objects
         self.round = 1
         self.turn = 1
         self.game = Game(num_players=len(self.agents), player_names=self.agents)
+
+        self.observations = {a: self.observe(a) for a in self.agents}
 
         # Make a log output folder
         if self.log:
             self.log_dir = os.path.join(".", "logs", datetime.datetime.now().strftime("%Y-%m-%d-%H-%M"))
             os.makedirs(self.log_dir)
 
-        return self.observation_spaces, self.infos
+        return self.observations, self.infos
 
     #===================================================================================================================
     def step(self, actions):
@@ -107,7 +160,32 @@ class WingspanEnvironment(AECEnv):
         - agent_selection (to the next agent)
         And any internal state used by observe() or render()
         """
-        raise NotImplementedError
+        print(actions)
+        action = actions[self.agent_selection]
+
+        if "Gain Food" in action.keys():
+            # Determine die taken and food gained
+            i = action["Gain Food"]
+            if i == 0: food_gained = "Fish"
+            elif i == 1: food_gained = "Rodent"
+            elif i == 2: food_gained = "Fruit"
+            elif i in [3,5]: food_gained = "Invertebrate"
+            elif i in [4,6]: food_gained = "Seed"
+            die_taken = "Invertebrate+Seed" if i in [5,6] else food_gained
+            print(f"Taking {die_taken} and gaining {food_gained}.")
+            # Take from birdfeeder
+            self.game.birdfeeder.take(die_taken)
+            self.game.players[self.agent_selection].editFood({food_gained: 1})
+        else:
+            raise NotImplementedError
+
+        # Re-roll birdfeeder if it's empty
+        if len(self.game.birdfeeder.food) == 0:
+            print("Re-rolling birdfeeder because it's empty.")
+            self.game.birdfeeder.roll()
+        
+        # Update observations
+        self.observations = {a: self.observe(a) for a in self.agents}
 
     #===================================================================================================================
     def render(self):
@@ -128,39 +206,7 @@ class WingspanEnvironment(AECEnv):
             with open(os.path.join(self.log_dir, f"Round_{self.round}_Turn_{self.turn}_Agent{self.agent_selection}_Action_{self.action_counts[self.agent_selection]}.html"), "w'") as f:
                 f.write(html)
 
-    def observe(self, agent):
-        """
-        Should return the observations in action mask for the agent
-        """
-        observation = {
-            # 0=Fish, 1=Rodent, 2=Fruit, 3=Invertebrate, 4=Seed, 5=Invertebrate+seed, 6=dieOutOfFeeder
-            "Birdfeeder": [
-                np.argwhere(np.array(BIRDFEEDER_FACES)==self.game.birdfeeder.food[i])[0][0] if i < len(self.game.birdfeeder.food) else 6
-                for i in range(MAX_NUMBER_DIE_IN_BIRDFEEDER)
-            ]
-        }
-
-        action_mask = {
-            "Gain Food": np.array([1 if f in str(self.game.birdfeeder.food) else 0 for f in FOOD_TYPES], dtype="int8")
-        }
-
-        return {"observation": observation, "action_mask": action_mask}
-
     #===================================================================================================================
     def save_snapshot(self):
         with open(os.path.join(self.log_dir, f"Round_{self.round}_Turn_{self.turn}_Agent{self.agent_selection}_Action_{self.action_counts[self.agent_selection]}.pkl"), "wb") as f:
             pickle.dump(self, f)
-
-
-    #===================================================================================================================
-    # lru_cache allows observation and action spaces to be memoized, reducing clock cycles required to get each agent's space.
-    # If your spaces change over time, remove this line (disable caching).
-    # @functools.lru_cache(maxsize=None)
-    def observation_space(self, agent):
-        return self.observation_spaces[agent]
-
-    #===================================================================================================================
-    # If your spaces change over time, remove this line (disable caching).
-    # @functools.lru_cache(maxsize=None)
-    def action_space(self, agent):
-        return self.action_spaces[agent]

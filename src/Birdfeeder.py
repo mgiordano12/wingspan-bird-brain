@@ -9,6 +9,7 @@ MAX_DIE_IN_BIRDFEEDER = 5
 class Birdfeeder:
     def __init__(self,seed=0):
         self.food = list() # initialize
+        self.can_be_rerolled = True
         if seed != 0:
             self.seeded = True
             # Produce food list that is bigger than we could reasonably go through in a game
@@ -21,7 +22,7 @@ class Birdfeeder:
         self.roll() # roll for 1st time
 
     def roll(self):
-        if len(set(self.food)) > 1:
+        if not self.can_be_rerolled:
             raise Exception(f'Cannot reroll feeder if there is more than 1 type of food in it. Currently has {self.food}.')
         del self.food # clear the birdfeeder
         if self.seeded:
@@ -30,11 +31,16 @@ class Birdfeeder:
             self.num_rerolls += 1
         else:
             self.food = [BirdfeederDie().faceup_side for _ in range(MAX_DIE_IN_BIRDFEEDER)]
+        
+        # Update if birdfeeder can be re-rolled
+        self.can_be_rerolled = len(set(self.food)) <= 1
 
     def take(self, food):
         if food not in self.food:
             raise ValueError(f'{food} is not in the birdfeeder.')
         self.food.remove(food)
+        # Update if birdfeeder can be re-rolled
+        self.can_be_rerolled = len(set(self.food)) <= 1
 
     def __repr__(self):
         return f'Birdfeeder: {self.food}'
